@@ -49,7 +49,8 @@ int main()
 	}
 	}
 	else cout << "Unable to open file";
-	DataDump.Print_Hash_Table();
+	//DataDump.Print_Hash_Table();
+	DataDump.Print_BST("0");
 	system("pause");
 	return 0;
 }

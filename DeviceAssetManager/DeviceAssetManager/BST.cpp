@@ -7,6 +7,8 @@ void Dump_BST::print(BST_NODE* branch)
 		cout << branch->device << endl;
 		cout <<"|\t"<< branch->SN<<" "<<branch->asset;
 		cout << endl;
+		if (branch->slaves != 0)
+			print(branch->slaves);
 		print(branch->right_child);
 	}
 }
@@ -33,7 +35,10 @@ void Dump_BST::writeToFile(BST_NODE* branch, const string & filename)
 
 void Dump_BST::insert(const string & dev, const string & x, BST_NODE * & branch)
 {
-	string device = dev, sn=x;
+	
+	string device = dev, sn=x.substr(0,x.find(",")),slave;
+	int length = sn.length();
+	
 	if (branch == 0)
 	{
 		branch = new BST_NODE(device, sn,"");
@@ -45,6 +50,31 @@ void Dump_BST::insert(const string & dev, const string & x, BST_NODE * & branch)
 			insert(dev, x, branch->right_child);
 		else
 			cout << "No Dupes!\n";
+	}
+	while (length < x.length())
+	{
+		slave = x.substr(length+1);
+		slave = slave.substr(0, slave.find(","));
+
+		if (branch->slaves == 0)
+		{
+			branch->slaves = new BST_NODE(device, slave, "");
+		}
+		else {
+			if (branch->slaves->SN > slave && branch->slaves->SN != slave)
+				insert(dev, slave, branch->slaves->left_child);
+			else if (branch->slaves->SN < slave && branch->slaves->SN != slave)
+				insert(dev, slave, branch->slaves->right_child);
+			else
+				cout << "No Dupes!\n";
+		}
+
+
+
+
+
+		//branch->slaves= new BST_NODE(device, slave, "");
+		length += slave.length()+1;
 	}
 }
 
