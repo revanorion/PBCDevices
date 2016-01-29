@@ -38,6 +38,7 @@ int main()
 				}
 				snL = snL.substr(0, snL.length() - 1);
 				DataDump.insert(deviceName, snL);
+				snL = "";
 				//instert into hashtable
 				//system("pause");
 			}

@@ -4,7 +4,7 @@ void Dump_BST::print(BST_NODE* branch)
 	if (branch != 0)
 	{
 		print(branch->left_child);
-		cout << branch->device << endl;
+		//cout << branch->device << endl;
 		cout <<"|\t"<< branch->SN<<" "<<branch->asset;
 		cout << endl;
 		if (branch->slaves != 0)
@@ -12,6 +12,21 @@ void Dump_BST::print(BST_NODE* branch)
 		print(branch->right_child);
 	}
 }
+
+void Dump_BST::printNode(BST_NODE* branch)
+{
+	if (branch != 0)
+	{
+		
+		cout << branch->device << endl;
+		cout << "| Master\t" << branch->SN << " " << branch->asset;
+		cout << endl;
+		if (branch->slaves != 0)
+			print(branch->slaves);
+		
+	}
+}
+
 
 //MODIFY
 void Dump_BST::writeToFile(BST_NODE* branch, const string & filename)
@@ -35,8 +50,18 @@ void Dump_BST::writeToFile(BST_NODE* branch, const string & filename)
 
 void Dump_BST::insert(const string & dev, const string & x, BST_NODE * & branch)
 {
+
 	
-	string device = dev, sn=x.substr(0,x.find(",")),slave;
+	
+	string device = dev,slave="", serials=x, sn;
+
+	while (serials.find_first_of(" ") != std::string::npos)
+	{
+		int j = serials.find(" ");
+		serials.erase(j, 1);
+	}
+
+	sn = serials.substr(0, x.find(","));
 	int length = sn.length();
 	
 	if (branch == 0)
@@ -45,38 +70,48 @@ void Dump_BST::insert(const string & dev, const string & x, BST_NODE * & branch)
 	}
 	else {
 		if (branch->device > device && branch->device != device)
-			insert(dev, x, branch->left_child);
+			insert(dev, serials, branch->left_child);
 		else if (branch->device < device && branch->device != device)
-			insert(dev, x, branch->right_child);
+			insert(dev, serials, branch->right_child);
 		else
-			cout << "No Dupes!\n";
+			cout << "No Dupes masters!\t "<<dev<<" "<< serials << "\n";
 	}
-	while (length < x.length())
+	//out of bounds
+	do
 	{
-		slave = x.substr(length+1);
-		slave = slave.substr(0, slave.find(","));
+		slave = serials.substr(length + 1);// ;
+		slave = slave.substr(0, serials.find(","));
+		insertSlave(dev, slave, branch->slaves);
+		length += slave.length()+1;
+	}while (length<serials.length());
 
-		if (branch->slaves == 0)
+	cout << "Complete!\n";
+	printNode(branch);
+}
+
+void Dump_BST::insertSlave(const string & dev, const string & x, BST_NODE * & branch)
+{
+
+	string device = dev, sn = x;
+	if (sn != "") {
+		if (branch == 0)
 		{
-			branch->slaves = new BST_NODE(device, slave, "");
+			branch = new BST_NODE(device, sn, "");
 		}
 		else {
-			if (branch->slaves->SN > slave && branch->slaves->SN != slave)
-				insert(dev, slave, branch->slaves->left_child);
-			else if (branch->slaves->SN < slave && branch->slaves->SN != slave)
-				insert(dev, slave, branch->slaves->right_child);
+			if (branch->SN > sn && branch->SN != sn)
+				insertSlave(dev, x, branch->left_child);
+			else if (branch->SN < sn && branch->SN != sn)
+				insertSlave(dev, x, branch->right_child);
 			else
-				cout << "No Dupes!\n";
+				cout << "No Dupes slaves!\t " << dev << " " << x << "\n";
 		}
-
-
-
-
-
-		//branch->slaves= new BST_NODE(device, slave, "");
-		length += slave.length()+1;
 	}
 }
+
+
+
+
 
 BST_NODE *& Dump_BST::search(const string & x, BST_NODE * branch)
 {
