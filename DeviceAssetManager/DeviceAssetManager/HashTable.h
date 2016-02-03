@@ -39,6 +39,6 @@ HashTable::HashTable(const HashTable & y)
 
 
 void HashTable::Print_Hash_Table_to_File(const string & filename) {
-	for (int x = 1; x < 27; x++)
+	for (int x = 0; x < 27; x++)
 		hash_table[x].writeToFile(filename);
 }

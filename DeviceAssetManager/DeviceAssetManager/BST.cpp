@@ -5,13 +5,57 @@ void Dump_BST::print(BST_NODE* branch)
 	{
 		print(branch->left_child);
 		//cout << branch->device << endl;
-		cout <<"|\t"<< branch->SN<<" "<<branch->asset;
-		cout << endl;
-		if (branch->slaves != 0)
-			print(branch->slaves);
+
+
+
+		cout << "+---" << branch->device;
+		if (branch->slaves != 0) {
+			cout << "\n|";
+			cout << "\t\\---" << branch->SN << "\n|";
+			cout << "\t\t\--- slaves\n|";
+			printSD(branch->slaves);
+		}
+		else
+			cout << "\n|\t+---" << branch->SN << "\n|";
+		if (branch->duplicates != 0) {
+			cout << "\t--- duplicates\n|";
+			printSD(branch->duplicates);
+		}
+
+
+
 		print(branch->right_child);
 	}
 }
+
+
+
+
+
+void Dump_BST::printSD(BST_NODE* branch)
+{
+	if (branch != 0)
+	{
+		printSD(branch->left_child);
+		cout << "\t\t\\---" << branch->SN << "\n|";
+		printSD(branch->right_child);
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 void Dump_BST::printNode(BST_NODE* branch)
 {
@@ -31,16 +75,31 @@ void Dump_BST::printNode(BST_NODE* branch)
 //MODIFY
 void Dump_BST::writeToFile(BST_NODE* branch, const string & filename)
 {
+	
+
 	if (branch != 0)
 	{
+		if (branch->device == "flr-9006")
+			cout << "lol0";
 		writeToFile(branch->left_child, filename);
 
 		ofstream myfile;
 		myfile.open(filename, ios::out | ios::app);
 		if (myfile.is_open())
 		{
-			myfile <<"├───"<< branch->device << "\n│";
-			myfile <<"\t├───"<<branch->SN<< "\n│";
+			myfile << "+---" << branch->device; 
+			if (branch->slaves != 0) {
+				myfile << "\n";
+				myfile << "\t\\---" << branch->SN << "\n|";
+				myfile << "\t\t\--- slaves\n|";
+				writeToFileSD(branch->slaves, filename);
+			}
+			else
+				myfile << "\n\t+---" << branch->SN << "\n|";
+			if (branch->duplicates != 0) {
+				myfile << "\t--- duplicates\n|";
+				writeToFileSD(branch->duplicates, filename);					
+			}
 			
 		}
 		else cout << "Unable to open file";
@@ -48,12 +107,29 @@ void Dump_BST::writeToFile(BST_NODE* branch, const string & filename)
 	}
 }
 
+void Dump_BST::writeToFileSD(BST_NODE* branch, const string & filename)
+{
+	if (branch != 0)
+	{
+		writeToFileSD(branch->left_child, filename);
 
+		ofstream myfile;
+		myfile.open(filename, ios::out | ios::app);
+		if (myfile.is_open())
+		{
+			myfile << "\t\t\\---" << branch->SN << "\n|";
+
+		}
+		else cout << "Unable to open file";
+		writeToFileSD(branch->right_child, filename);
+	}
+}
 
 void Dump_BST::insert(const string & dev, const string & x, BST_NODE * & branch)
 {
 
-	
+	if (dev == "flr-9006")
+		cout << "lol0";
 	
 	string device = dev,slave="", serials=x, sn;
 
@@ -82,11 +158,14 @@ void Dump_BST::insert(const string & dev, const string & x, BST_NODE * & branch)
 					if (serials[0] == ',')
 						serials = serials.substr(1);
 
-
+					if (slave == "DESCR:\"MLANSwitch\"")
+						cout << "lol";
 
 					if (slave.find(",") != std::string::npos)
 						throw 10;
-					insertSlave(dev, slave, branch->slaves);
+					int error=insertSlave(dev, slave, branch->slaves);
+					if (error==1)
+						insertDup(dev, slave, branch->duplicates);
 				} while (serials != "");
 			}
 		}
@@ -94,8 +173,8 @@ void Dump_BST::insert(const string & dev, const string & x, BST_NODE * & branch)
 		{
 			cout << "Error!\n";
 		}
-		cout << "Complete!\n";
-		printNode(branch);
+		//cout << "Complete!\n";
+		//printNode(branch);
 	}
 	else {
 		if (branch->device > device && branch->device != device)
@@ -118,7 +197,31 @@ void Dump_BST::insert(const string & dev, const string & x, BST_NODE * & branch)
 	
 }
 
-void Dump_BST::insertSlave(const string & dev, const string & x, BST_NODE * & branch)
+int Dump_BST::insertSlave(const string & dev, const string & x, BST_NODE * & branch)
+{
+
+	string device = dev, sn = x;
+	if (sn != "") {
+		if (branch == 0)
+		{
+			branch = new BST_NODE(device, sn, "");
+			return 0;
+		}
+		else {
+			if (branch->SN > sn && branch->SN != sn)
+				insertSlave(dev, x, branch->left_child);
+			else if (branch->SN < sn && branch->SN != sn)
+				insertSlave(dev, x, branch->right_child);
+			else
+			{
+				return 1;
+			}
+		}
+	}
+}
+
+
+void Dump_BST::insertDup(const string & dev, const string & x, BST_NODE * & branch)
 {
 
 	string device = dev, sn = x;
@@ -129,17 +232,12 @@ void Dump_BST::insertSlave(const string & dev, const string & x, BST_NODE * & br
 		}
 		else {
 			if (branch->SN > sn && branch->SN != sn)
-				insertSlave(dev, x, branch->left_child);
+				insertDup(dev, x, branch->left_child);
 			else if (branch->SN < sn && branch->SN != sn)
-				insertSlave(dev, x, branch->right_child);
-			else
-				cout << "No Dupes slaves!\t " << dev << " " << x << "\n";
+				insertDup(dev, x, branch->right_child);
 		}
 	}
 }
-
-
-
 
 
 BST_NODE *& Dump_BST::search(const string & x, BST_NODE * branch)

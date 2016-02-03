@@ -37,5 +37,8 @@
     <Text Include="OutPut.txt">
       <Filter>Resource Files</Filter>
     </Text>
+    <Text Include="MyList.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
   </ItemGroup>
 </Project>
