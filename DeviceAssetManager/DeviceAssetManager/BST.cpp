@@ -39,7 +39,9 @@ void Dump_BST::writeToFile(BST_NODE* branch, const string & filename)
 		myfile.open(filename, ios::out | ios::app);
 		if (myfile.is_open())
 		{
-			//myfile << branch->s << "\n";
+			myfile <<"├───"<< branch->device << "\n│";
+			myfile <<"\t├───"<<branch->SN<< "\n│";
+			
 		}
 		else cout << "Unable to open file";
 		writeToFile(branch->right_child, filename);
@@ -58,47 +60,62 @@ void Dump_BST::insert(const string & dev, const string & x, BST_NODE * & branch)
 	while ((serials.find_first_of(" ") != std::string::npos && serials[serials.find_first_of(" ")+1]==',') || serials.back()==' ')
 	{
 		int j = serials.find(" ");
-		cout << "last char is " << serials[serials.length()]<<" done\n";
 		serials.erase(j, 1);
 	}
 
-	sn = serials.substr(0, x.find(","));
-	//serials.
-	int length = sn.length();
+	sn = serials.substr(0, serials.find(","));
+	
 	
 	if (branch == 0)
 	{
 		branch = new BST_NODE(device, sn,"");
+		serials = serials.substr(sn.length());
+		if (serials[0] == ',')
+			serials = serials.substr(1);
+		try {
+			if (serials.find_first_of(",") != std::string::npos && serials != "") {
+				do
+				{
+
+					slave = serials.substr(0, serials.find(","));
+					serials = serials.substr(slave.length());
+					if (serials[0] == ',')
+						serials = serials.substr(1);
+
+
+
+					if (slave.find(",") != std::string::npos)
+						throw 10;
+					insertSlave(dev, slave, branch->slaves);
+				} while (serials != "");
+			}
+		}
+		catch (int e)
+		{
+			cout << "Error!\n";
+		}
+		cout << "Complete!\n";
+		printNode(branch);
 	}
 	else {
 		if (branch->device > device && branch->device != device)
+		{
 			insert(dev, serials, branch->left_child);
+			return;
+		}
 		else if (branch->device < device && branch->device != device)
+		{
 			insert(dev, serials, branch->right_child);
+			return;
+		}
 		else
-			cout << "No Dupes masters!\t "<<dev<<" "<< serials << "\n";
-	}
-	//out of bounds
-	try {
-		if (serials.find_first_of(",") != std::string::npos) {
-			do
-			{
-				slave = serials.substr(length + 1);// ;
-				slave = slave.substr(0, serials.find(","));
-
-				if (slave.find(",") != std::string::npos)
-					throw 10;
-				insertSlave(dev, slave, branch->slaves);
-				length += slave.length() + 1;
-			} while (length < serials.length());
+		{
+			cout << "No Dupes masters!\t " << dev << " " << serials << "\n";
+			return;
 		}
 	}
-	catch (int e)
-	{
-		cout << "Error!\n";
-	}
-	cout << "Complete!\n";
-	printNode(branch);
+	//out of bounds
+	
 }
 
 void Dump_BST::insertSlave(const string & dev, const string & x, BST_NODE * & branch)
