@@ -47,7 +47,14 @@ public:
 	void Update(const string & s);//{ cout << "   Inside Client_Info_BST Update\n"; };
 	void print() { print(root); cout << endl; };
 	void del(const string & x) { del(search(x)); };
-	void writeToFile(const string & filename) { writeToFile(root, filename); };
+	void writeToFile(const string & filename) {
+		ofstream myfile;
+		myfile.open(filename, ios::out | ios::app);
+		if (myfile.is_open())
+		{
+			writeToFile(root, myfile);
+		}
+	}
 	friend class Client_Address_Book;
 
 private:
@@ -56,8 +63,8 @@ private:
 	int insertSlave(const string &, const string &, BST_NODE *&);
 	void insertDup(const string &, const string &, BST_NODE *&);
 	BST_NODE *& search(const string &, BST_NODE *);
-	void writeToFile(BST_NODE*, const string & filename);
-	void writeToFileSD(BST_NODE*, const string & filename);
+	void writeToFile(BST_NODE*, ofstream&);
+	void writeToFileSD(BST_NODE*, ofstream&);
 	void remove(const string &, BST_NODE *&);
 	void print(BST_NODE*);
 	void printSD(BST_NODE*);

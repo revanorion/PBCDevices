@@ -73,75 +73,64 @@ void Dump_BST::printNode(BST_NODE* branch)
 
 
 //MODIFY
-void Dump_BST::writeToFile(BST_NODE* branch, const string & filename)
+void Dump_BST::writeToFile(BST_NODE* branch, ofstream& myfile)
 {
 	
 
 	if (branch != 0)
 	{
-		if (branch->device == "flr-9006")
-			cout << "lol0";
-		writeToFile(branch->left_child, filename);
+		
+		writeToFile(branch->left_child, myfile);
 
-		ofstream myfile;
-		myfile.open(filename, ios::out | ios::app);
+		
+		
 		if (myfile.is_open())
 		{
 			myfile << "+---" << branch->device; 
 			if (branch->slaves != 0) {
-				myfile << "\n";
+				myfile << "\n|";
 				myfile << "\t\\---" << branch->SN << "\n|";
-				myfile << "\t\t\--- slaves\n|";
-				writeToFileSD(branch->slaves, filename);
+				myfile << "\t\t\\--- slaves\n|";
+				writeToFileSD(branch->slaves, myfile);
 			}
 			else
-				myfile << "\n\t+---" << branch->SN << "\n|";
+				myfile << "\n|\t+---" << branch->SN << "\n|";
 			if (branch->duplicates != 0) {
 				myfile << "\t--- duplicates\n|";
-				writeToFileSD(branch->duplicates, filename);					
+				writeToFileSD(branch->duplicates, myfile);
 			}
 			
 		}
 		else cout << "Unable to open file";
-		writeToFile(branch->right_child, filename);
+		writeToFile(branch->right_child, myfile);
 	}
 }
 
-void Dump_BST::writeToFileSD(BST_NODE* branch, const string & filename)
+void Dump_BST::writeToFileSD(BST_NODE* branch, ofstream& myfile)
 {
 	if (branch != 0)
 	{
-		writeToFileSD(branch->left_child, filename);
+		writeToFileSD(branch->left_child, myfile);
 
-		ofstream myfile;
-		myfile.open(filename, ios::out | ios::app);
 		if (myfile.is_open())
 		{
 			myfile << "\t\t\\---" << branch->SN << "\n|";
 
 		}
 		else cout << "Unable to open file";
-		writeToFileSD(branch->right_child, filename);
+		writeToFileSD(branch->right_child, myfile);
 	}
 }
 
 void Dump_BST::insert(const string & dev, const string & x, BST_NODE * & branch)
 {
-
-	if (dev == "flr-9006")
-		cout << "lol0";
-	
 	string device = dev,slave="", serials=x, sn;
-
 	while ((serials.find_first_of(" ") != std::string::npos && serials[serials.find_first_of(" ")+1]==',') || serials.back()==' ')
 	{
 		int j = serials.find(" ");
 		serials.erase(j, 1);
 	}
-
 	sn = serials.substr(0, serials.find(","));
-	
-	
 	if (branch == 0)
 	{
 		branch = new BST_NODE(device, sn,"");
@@ -149,32 +138,34 @@ void Dump_BST::insert(const string & dev, const string & x, BST_NODE * & branch)
 		if (serials[0] == ',')
 			serials = serials.substr(1);
 		try {
-			if (serials.find_first_of(",") != std::string::npos && serials != "") {
-				do
+			if (serials != "") {		
+				if (serials.find_first_of(",") == std::string::npos)
 				{
+					int error = insertSlave(dev, serials, branch->slaves);
+					if (error == 1)
+						insertDup(dev, serials, branch->duplicates);
+				}
+				else {
+					do
+					{
 
-					slave = serials.substr(0, serials.find(","));
-					serials = serials.substr(slave.length());
-					if (serials[0] == ',')
-						serials = serials.substr(1);
-
-					if (slave == "DESCR:\"MLANSwitch\"")
-						cout << "lol";
-
-					if (slave.find(",") != std::string::npos)
-						throw 10;
-					int error=insertSlave(dev, slave, branch->slaves);
-					if (error==1)
-						insertDup(dev, slave, branch->duplicates);
-				} while (serials != "");
+						slave = serials.substr(0, serials.find(","));
+						serials = serials.substr(slave.length());
+						if (serials[0] == ',')
+							serials = serials.substr(1);
+						if (slave.find(",") != std::string::npos)
+							throw 10;
+						int error = insertSlave(dev, slave, branch->slaves);
+						if (error == 1)
+							insertDup(dev, slave, branch->duplicates);
+					} while (serials != "");
+				}
 			}
 		}
 		catch (int e)
 		{
 			cout << "Error!\n";
 		}
-		//cout << "Complete!\n";
-		//printNode(branch);
 	}
 	else {
 		if (branch->device > device && branch->device != device)
@@ -193,8 +184,6 @@ void Dump_BST::insert(const string & dev, const string & x, BST_NODE * & branch)
 			return;
 		}
 	}
-	//out of bounds
-	
 }
 
 int Dump_BST::insertSlave(const string & dev, const string & x, BST_NODE * & branch)
@@ -277,13 +266,23 @@ void Dump_BST::del(BST_NODE *& branch)
 		if (branch->left_child == 0)  //node has  1 child which is the rchild
 		{
 			ptr = branch->right_child;
+			while (branch->slaves != 0)
+				del(branch->slaves);
+			while (branch->duplicates != 0)
+				del(branch->duplicates);
 			delete branch;
+			branch = 0;
 			branch = ptr;
 		}
 		else if (branch->right_child == 0)  //node has 1 child which is the lchild 
 		{
 			ptr = branch->left_child;
+			while (branch->slaves != 0)
+				del(branch->slaves);
+			while (branch->duplicates != 0)
+				del(branch->duplicates);
 			delete branch;
+			branch = 0;
 			branch = ptr;
 		}
 		else   //node has 2 children; non-trivial; recursion coming into play
@@ -291,8 +290,15 @@ void Dump_BST::del(BST_NODE *& branch)
 			ptr = inorder_succ(branch);
 			branch->device = ptr->device;
 			branch->SN = ptr->SN;
-		
-			del(branch);
+			while (branch->slaves != 0)
+				del(branch->slaves);
+			while (branch->duplicates != 0)
+				del(branch->duplicates);
+			branch->slaves = ptr->slaves;
+			branch->duplicates = ptr->duplicates;
+			ptr->slaves = 0;
+			ptr->duplicates = 0;
+			del(ptr);
 		}
 	}
 
