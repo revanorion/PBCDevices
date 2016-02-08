@@ -16,9 +16,6 @@ int main()
 			{
 				if (line.find("Device Name") != std::string::npos) {
 					string deviceName = line.substr(line.find(":") + 2, line.length());
-					if (deviceName == "flr-9010")
-						cout << "lol";
-					//cout << deviceName << endl;
 					myfiles << deviceName << endl;
 					while (getline(myfile, line) && (line.find("#") == std::string::npos || line.find("Serial#") != std::string::npos))
 					{
@@ -49,6 +46,6 @@ int main()
 
 //	DataDump.Print_BST("f");
 	DataDump.Print_Hash_Table_to_File("MyList.txt");
-	system("pause");
+	
 	return 0;
 }

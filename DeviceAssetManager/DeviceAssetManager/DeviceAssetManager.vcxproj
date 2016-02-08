@@ -155,7 +155,6 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="Dump.txt" />
-    <Text Include="MyList.txt" />
     <Text Include="OutPut.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

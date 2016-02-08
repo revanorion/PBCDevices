@@ -22,7 +22,12 @@ public:
 	string & get_SN() { return SN; };
 	string & get_Asset() { return asset; };
 	DATA & get_data() { return db; };
-	~BST_NODE() {};
+	~BST_NODE() {
+		delete slaves;
+		delete duplicates;
+		delete left_child;
+		delete right_child;
+	};
 	friend class Dump_BST;
 
 private:
@@ -39,7 +44,7 @@ class Dump_BST
 public:
 	Dump_BST() :root(0) {};
 	Dump_BST(const Dump_BST &x) { if (x.root != 0) copy(root, x.root); };//Copy Constructor
-	~Dump_BST() { while (root != 0) { del(root); } };
+	~Dump_BST() { delete root; };//while (root != 0) { del(root); } };
 	void insert(const string & dev, const string & x) { insert(dev, x, root); };
 	void insertSlave(const string & dev, const string & x) { insertSlave(dev, x, root); };
 	BST_NODE *& search(const string & x) { return search(x, root); };

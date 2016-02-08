@@ -137,7 +137,6 @@ void Dump_BST::insert(const string & dev, const string & x, BST_NODE * & branch)
 		serials = serials.substr(sn.length());
 		if (serials[0] == ',')
 			serials = serials.substr(1);
-		try {
 			if (serials != "") {		
 				if (serials.find_first_of(",") == std::string::npos)
 				{
@@ -153,8 +152,6 @@ void Dump_BST::insert(const string & dev, const string & x, BST_NODE * & branch)
 						serials = serials.substr(slave.length());
 						if (serials[0] == ',')
 							serials = serials.substr(1);
-						if (slave.find(",") != std::string::npos)
-							throw 10;
 						int error = insertSlave(dev, slave, branch->slaves);
 						if (error == 1)
 							insertDup(dev, slave, branch->duplicates);
@@ -162,11 +159,8 @@ void Dump_BST::insert(const string & dev, const string & x, BST_NODE * & branch)
 				}
 			}
 		}
-		catch (int e)
-		{
-			cout << "Error!\n";
-		}
-	}
+
+	
 	else {
 		if (branch->device > device && branch->device != device)
 		{
@@ -255,123 +249,6 @@ BST_NODE *& Dump_BST::search(const string & x, BST_NODE * branch)
 		}
 	}*/
 	return root;
-}
-
-void Dump_BST::del(BST_NODE *& branch)
-{
-	if (branch != 0)
-	{
-		BST_NODE *ptr, *parent;
-		if (branch->left_child == 0 && branch->right_child == 0)	//node 0 children
-		{
-			while (branch->slaves != 0)
-				del(branch->slaves);
-			while (branch->duplicates != 0)
-				del(branch->duplicates);
-			delete branch;
-			branch = 0;// stopped here. 
-		}
-		else if (branch->left_child == 0)  //node has  1 child which is the rchild
-		{
-			ptr = branch->right_child;
-			branch->device = ptr->device;
-			branch->SN = ptr->SN;
-			while (branch->slaves != 0)
-				del(branch->slaves);
-			while (branch->duplicates != 0)
-				del(branch->duplicates);
-			branch->slaves = ptr->slaves;
-			branch->duplicates = ptr->duplicates;
-			//delete branch;
-			if (ptr->left_child == 0 && ptr->right_child == 0)	//node 0 children
-			{
-				while (branch->slaves != 0)
-					del(ptr->slaves);
-				while (branch->duplicates != 0)
-					del(ptr->duplicates);
-				delete ptr;
-				branch->right_child = 0;
-			}else
-			del(ptr);
-		}
-		else if (branch->right_child == 0)  //node has 1 child which is the lchild 
-		{
-			ptr = branch->left_child;
-			branch->device = ptr->device;
-			branch->SN = ptr->SN;
-			while (branch->slaves != 0)
-				del(branch->slaves);
-			while (branch->duplicates != 0)
-				del(branch->duplicates);
-			branch->slaves = ptr->slaves;
-			branch->duplicates = ptr->duplicates;
-			if (ptr->left_child == 0 && ptr->right_child == 0)	//node 0 children
-			{
-				while (branch->slaves != 0)
-					del(ptr->slaves);
-				while (branch->duplicates != 0)
-					del(ptr->duplicates);
-				delete ptr;
-				branch->left_child = 0;
-			}
-			else
-			del(ptr);
-		}
-
-
-		else   //node has 2 children; non-trivial; recursion coming into play
-		{
-			ptr = branch->right_child, parent=branch;
-			while (ptr->left_child != 0)
-			{
-				parent = ptr;
-				ptr = ptr->left_child;
-			}
-
-
-
-
-			branch->device = ptr->device;
-			branch->SN = ptr->SN;
-			while (branch->slaves != 0)
-				del(branch->slaves);
-			while (branch->duplicates != 0)
-				del(branch->duplicates);
-			branch->slaves = ptr->slaves;
-			branch->duplicates = ptr->duplicates;
-			ptr->slaves = 0;
-			ptr->duplicates = 0;
-
-			if (parent == branch)
-				parent->right_child = 0;
-			else
-				parent->left_child = 0;
-			delete ptr;
-		}
-
-
-
-
-
-
-
-		//else   //node has 2 children; non-trivial; recursion coming into play
-		//{
-		//	ptr = inorder_succ(branch);
-		//	branch->device = ptr->device;
-		//	branch->SN = ptr->SN;
-		//	while (branch->slaves != 0)
-		//		del(branch->slaves);
-		//	while (branch->duplicates != 0)
-		//		del(branch->duplicates);
-		//	branch->slaves = ptr->slaves;
-		//	branch->duplicates = ptr->duplicates;
-		//	ptr->slaves = 0;
-		//	ptr->duplicates = 0;
-		//	del(ptr);
-		//}
-	}
-
 }
 
 BST_NODE * Dump_BST::inorder_succ(BST_NODE * loc_ptr)
