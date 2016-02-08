@@ -19,9 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{B948C7EA-2EA9-45DA-9CE9-E628814223DB}</ProjectGuid>
+    <ProjectGuid>{411CD0C0-A8DE-4FB7-90DE-A5A9A471271B}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>DeviceAssetManager</RootNamespace>
+    <RootNamespace>TestBench</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -146,17 +146,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="BST.cpp" />
-    <ClCompile Include="main.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="BST.h" />
-    <ClInclude Include="HashTable.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="Dump.txt" />
-    <Text Include="MyList.txt" />
-    <Text Include="OutPut.txt" />
+    <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

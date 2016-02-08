@@ -15,30 +15,8 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="BST.cpp">
+    <ClCompile Include="Source.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="BST.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="HashTable.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="Dump.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="OutPut.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="MyList.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
   </ItemGroup>
 </Project>

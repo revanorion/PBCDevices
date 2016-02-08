@@ -1,5 +1,5 @@
 ﻿#include "BST.h"
-void Dump_BST::print(BST_NODE* branch)
+void Dump_BST::print(shared_ptr<BST_NODE>& branch)
 {
 	if (branch != 0)
 	{
@@ -32,7 +32,7 @@ void Dump_BST::print(BST_NODE* branch)
 
 
 
-void Dump_BST::printSD(BST_NODE* branch)
+void Dump_BST::printSD(shared_ptr<BST_NODE>& branch)
 {
 	if (branch != 0)
 	{
@@ -57,7 +57,7 @@ void Dump_BST::printSD(BST_NODE* branch)
 
 
 
-void Dump_BST::printNode(BST_NODE* branch)
+void Dump_BST::printNode(shared_ptr<BST_NODE>& branch)
 {
 	if (branch != 0)
 	{
@@ -73,7 +73,7 @@ void Dump_BST::printNode(BST_NODE* branch)
 
 
 //MODIFY
-void Dump_BST::writeToFile(BST_NODE* branch, ofstream& myfile)
+void Dump_BST::writeToFile(shared_ptr<BST_NODE>& branch, ofstream& myfile)
 {
 	
 
@@ -106,7 +106,7 @@ void Dump_BST::writeToFile(BST_NODE* branch, ofstream& myfile)
 	}
 }
 
-void Dump_BST::writeToFileSD(BST_NODE* branch, ofstream& myfile)
+void Dump_BST::writeToFileSD(shared_ptr<BST_NODE>& branch, ofstream& myfile)
 {
 	if (branch != 0)
 	{
@@ -122,7 +122,7 @@ void Dump_BST::writeToFileSD(BST_NODE* branch, ofstream& myfile)
 	}
 }
 
-void Dump_BST::insert(const string & dev, const string & x, BST_NODE * & branch)
+void Dump_BST::insert(const string & dev, const string & x, shared_ptr<BST_NODE>& branch)
 {
 	string device = dev,slave="", serials=x, sn;
 	while ((serials.find_first_of(" ") != std::string::npos && serials[serials.find_first_of(" ")+1]==',') || serials.back()==' ')
@@ -133,7 +133,7 @@ void Dump_BST::insert(const string & dev, const string & x, BST_NODE * & branch)
 	sn = serials.substr(0, serials.find(","));
 	if (branch == 0)
 	{
-		branch = new BST_NODE(device, sn,"");
+		branch = make_shared<BST_NODE>(device, sn,"");
 		serials = serials.substr(sn.length());
 		if (serials[0] == ',')
 			serials = serials.substr(1);
@@ -180,14 +180,14 @@ void Dump_BST::insert(const string & dev, const string & x, BST_NODE * & branch)
 	}
 }
 
-int Dump_BST::insertSlave(const string & dev, const string & x, BST_NODE * & branch)
+int Dump_BST::insertSlave(const string & dev, const string & x, shared_ptr<BST_NODE>& branch)
 {
 
 	string device = dev, sn = x;
 	if (sn != "") {
 		if (branch == 0)
 		{
-			branch = new BST_NODE(device, sn, "");
+			branch = make_shared<BST_NODE>(device, sn, "");
 			return 0;
 		}
 		else {
@@ -204,14 +204,14 @@ int Dump_BST::insertSlave(const string & dev, const string & x, BST_NODE * & bra
 }
 
 
-void Dump_BST::insertDup(const string & dev, const string & x, BST_NODE * & branch)
+void Dump_BST::insertDup(const string & dev, const string & x, shared_ptr<BST_NODE>& branch)
 {
 
 	string device = dev, sn = x;
 	if (sn != "") {
 		if (branch == 0)
 		{
-			branch = new BST_NODE(device, sn, "");
+			branch = make_shared<BST_NODE>(device, sn, "");
 		}
 		else {
 			if (branch->SN > sn && branch->SN != sn)
@@ -223,7 +223,7 @@ void Dump_BST::insertDup(const string & dev, const string & x, BST_NODE * & bran
 }
 
 
-BST_NODE *& Dump_BST::search(const string & x, BST_NODE * branch)
+shared_ptr<BST_NODE>& Dump_BST::search(const string & x, shared_ptr<BST_NODE>& branch)
 {
 	/*string lastname, firstname;
 	lastname = x.substr(0, x.find(" "));
@@ -251,9 +251,9 @@ BST_NODE *& Dump_BST::search(const string & x, BST_NODE * branch)
 	return root;
 }
 
-BST_NODE * Dump_BST::inorder_succ(BST_NODE * loc_ptr)
+shared_ptr<BST_NODE> Dump_BST::inorder_succ(const shared_ptr<BST_NODE>& loc_ptr)
 {
-	BST_NODE * ptr = loc_ptr->right_child;
+	shared_ptr<BST_NODE> ptr = loc_ptr->right_child;
 
 	while (ptr->left_child != 0)
 	{
@@ -263,7 +263,7 @@ BST_NODE * Dump_BST::inorder_succ(BST_NODE * loc_ptr)
 	return ptr;
 }
 
-void Dump_BST::remove(const string & x, BST_NODE *&branch)
+void Dump_BST::remove(const string & x, shared_ptr<BST_NODE>&branch)
 {
 	//string lastname, firstname, tmp = x;
 	//lastname = tmp.substr(0, x.find(" "));
@@ -321,7 +321,7 @@ void Dump_BST::Update(const string & x)
 }
 
 
-void Dump_BST::copy(BST_NODE *& root, const BST_NODE * copyN)
+void Dump_BST::copy(shared_ptr<BST_NODE>& root, const shared_ptr<BST_NODE>& copyN)
 {
 	/*if (copyN != 0)
 	{
