@@ -3,9 +3,12 @@
 #include <crtdbg.h>
 #include "HashTable.h"
 
+
 int main()
 {
-	{
+
+	
+
 	HashTable DataDump;
 	string line, sn, snL;
 	ifstream myfile("Dump.txt");
@@ -52,7 +55,7 @@ int main()
 	//DataDump.Print_BST("f");
 	DataDump.Print_Hash_Table_to_File("MyList.txt");
 	//_CrtDumpMemoryLeaks();
-}
+	DataDump.Print_Hash_Table_to_Excel("newfile");
 	cout << "Hello worl1\n";
 	return 0;
 }

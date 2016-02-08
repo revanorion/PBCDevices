@@ -1,4 +1,11 @@
 ﻿#include "BST.h"
+
+unsigned int Dump_BST::rowNumber;
+unsigned int Dump_BST::colomnNumber;
+
+
+
+
 void Dump_BST::print(shared_ptr<BST_NODE>& branch)
 {
 	if (branch != 0)
@@ -70,6 +77,55 @@ void Dump_BST::printNode(shared_ptr<BST_NODE>& branch)
 		
 	}
 }
+
+
+void Dump_BST::writeToExcel(shared_ptr<BST_NODE>& branch, Book*& book, Sheet*& sheet) 
+{
+	if (branch!=0 && book && sheet)
+	{
+		writeToExcel(branch->left_child, book, sheet);
+
+
+		std::wstring widestr = std::wstring(branch->device.begin(), branch->device.end());
+		const wchar_t* widecstr = widestr.c_str();
+		sheet->writeStr(rowNumber, colomnNumber, widecstr);
+
+		colomnNumber++;
+		widestr = std::wstring(branch->SN.begin(), branch->SN.end());
+		widecstr = widestr.c_str();
+		sheet->writeStr(rowNumber, colomnNumber, widecstr);
+
+		if (branch->slaves != 0)
+			writeToExcelSlave(branch->slaves, book, sheet);
+		colomnNumber = 1;
+		rowNumber++;
+
+		writeToExcel(branch->right_child, book, sheet);
+	}
+
+}
+
+
+void Dump_BST::writeToExcelSlave(shared_ptr<BST_NODE>& branch, Book*& book, Sheet*& sheet)
+{
+	if (branch != 0 && book && sheet)
+	{
+		writeToExcelSlave(branch->left_child, book, sheet);
+
+
+		colomnNumber++;
+		std::wstring widestr = std::wstring(branch->SN.begin(), branch->SN.end());
+		const wchar_t* widecstr = widestr.c_str();
+		sheet->writeStr(rowNumber, colomnNumber, widecstr);
+
+		writeToExcelSlave(branch->right_child, book, sheet);
+	}
+
+}
+
+
+
+
 
 
 //MODIFY

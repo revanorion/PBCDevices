@@ -5,7 +5,7 @@ class HashTable
 {
 public:
 
-	HashTable(); //default constructor will read data from input file "client_address_data.txt".
+	HashTable (); //default constructor will read data from input file "client_address_data.txt".
 	HashTable(const HashTable &);//Copy Constructor
 
 	~HashTable() { delete[]hash_table; };
@@ -17,10 +17,12 @@ public:
 	void load_data(const string & s);
 	void Print_BST(const string & s) { hash_table[hash(s)].print(); };//Print a BST (cell in hash table) inorder to the screen      
 
-	void Print_Hash_Table_to_File(const string & filename);	//function will print hash table to output file                             
+	void Print_Hash_Table_to_File(const string & filename);	//function will print hash table to output file         
+	void Print_Hash_Table_to_Excel(const string & filename);
 private:
 
 	Dump_BST *hash_table;
+	
 };
 
 
@@ -28,7 +30,7 @@ private:
 HashTable::HashTable()
 {
 	hash_table = new Dump_BST[27];
-	
+
 }
 HashTable::HashTable(const HashTable & y)
 {
@@ -41,4 +43,25 @@ HashTable::HashTable(const HashTable & y)
 void HashTable::Print_Hash_Table_to_File(const string & filename) {
 	for (int x = 0; x < 27; x++)
 		hash_table[x].writeToFile(filename);
+}
+
+void HashTable::Print_Hash_Table_to_Excel(const string & filename) {
+	Book* book = xlCreateBook();
+	string file = filename;
+	if (book) {
+		Sheet* sheet = book->addSheet(L"Sheet1");
+		if (sheet) {
+			for (int x = 0; x < 27; x++)
+				hash_table[x].writeToExcel(book,sheet);
+		}
+
+		if (file.find(".xls")==string::npos || file.substr(file.length() - 4) != ".xls")
+			file +=".xls";
+		std::wstring widestr = std::wstring(file.begin(), file.end());
+		const wchar_t* widecstr = widestr.c_str();
+
+
+		book->save(widecstr);
+		book->release();
+	}
 }
