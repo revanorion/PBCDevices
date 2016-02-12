@@ -113,7 +113,7 @@ void Dump_BST::writeToExcelSlave(shared_ptr<BST_NODE>& branch, Book*& book, Shee
 		writeToExcelSlave(branch->left_child, book, sheet);
 
 
-		colomnNumber++;
+		rowNumber++;
 		std::wstring widestr = std::wstring(branch->SN.begin(), branch->SN.end());
 		const wchar_t* widecstr = widestr.c_str();
 		sheet->writeStr(rowNumber, colomnNumber, widecstr);
