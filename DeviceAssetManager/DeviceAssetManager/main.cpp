@@ -55,11 +55,11 @@ int main()
 	//DataDump.Print_BST("f");
 
 	DataDump.read_tool_text("Dump.txt");
-	//DataDump.read_xls_data("FY 2016 20160114.xlsx");
+	DataDump.read_xls_data("FY 2016 20160114.xlsx");
 	DataDump.Print_Hash_Table_to_File("MyList.txt");
 	//_CrtDumpMemoryLeaks();
 	DataDump.Print_Hash_Table_to_Excel("newfile");
-	DataDump.read_xls_data("newfile.xls");
+	//DataDump.read_xls_data("newfile.xls");
 	cout << "Hello worl1\n";
 	return 0;
 }

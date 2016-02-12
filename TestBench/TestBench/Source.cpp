@@ -6,8 +6,12 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-using namespace std;
 
+#using <SX.dll>
+#include <msclr\marshal_cppstd.h>
+
+using namespace std;
+using namespace SmartXLS;
 struct DATA {
 
 
@@ -32,6 +36,7 @@ public:
 	friend class Dump_BST;
 
 private:
+	
 	shared_ptr<BST_NODE> right_child;
 	shared_ptr<BST_NODE> left_child;
 	shared_ptr<BST_NODE> duplicates;
@@ -83,6 +88,12 @@ private:
 
 void Dump_BST::insert(const string & device, const string &serial, shared_ptr<BST_NODE> &root)
 {
+	
+
+
+
+
+
 	if (root == 0)
 	{
 		root= make_shared<BST_NODE>(device,serial,"");
@@ -99,6 +110,71 @@ void Dump_BST::insert(const string & device, const string &serial, shared_ptr<BS
 
 int main()
 {
+
+
+	WorkBook ^ w = gcnew WorkBook();
+	WorkBook ^test = gcnew WorkBook();
+	w->read("newfile.xls");
+
+
+	int numsheets = w->NumSheets;
+	for (int sheetIndex = 0; sheetIndex < numsheets; sheetIndex++)
+	{
+		//select sheet
+		w->Sheet = sheetIndex;
+		string sheetName = msclr::interop::marshal_as<std::string>(w->getSheetName(sheetIndex));
+		//get the last row of this sheet.
+		int lastRow = w->LastRow;
+		for (int rowIndex = 0; rowIndex <= lastRow; rowIndex++)
+		{
+			//get the last column of this row.
+			int lastColForRow = w->getLastColForRow(rowIndex);
+			for (int colIndex = 0; colIndex <= lastColForRow; colIndex++)
+			{
+				double n;
+				std::string t, f;
+				int type = w->getType(rowIndex, colIndex);
+				if (type < 0)
+				{
+					f = msclr::interop::marshal_as<std::string>(w->getFormula(rowIndex, colIndex));
+					type -= 0;
+				}
+				switch (type)
+				{
+
+				case WorkBook::TypeNumber:
+					n = w->getNumber(rowIndex, colIndex);
+					cout << n << endl;
+					continue;
+
+				case WorkBook::TypeText:
+					t = msclr::interop::marshal_as<std::string>(w->getText(rowIndex, colIndex));
+					cout << t << endl;
+					test->setText(rowIndex, colIndex, gcnew System::String(t.c_str()));
+					continue;
+
+				case WorkBook::TypeLogical:
+				case WorkBook::TypeError:
+					n = w->getNumber(rowIndex, colIndex);
+					continue;
+
+				case WorkBook::TypeEmpty:
+					continue;
+				}
+			}
+		}
+	}
+	test->write("newBook.xls");
+
+
+
+
+
+
+
+
+
+
 	shared_ptr<Dump_BST>tree(make_shared<Dump_BST>());
 	tree->insert("dev1", "sn1");
 	tree->insert("dev0", "sn0");

@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="BST_NODE">
+    <Position X="6.75" Y="0.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AQAAAAACAEAQEAAAAAAAAACACAAQICAAAhAAABQAAAA=</HashCode>
+      <FileName>BST.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Dump_BST">
+    <Position X="4.25" Y="0.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AASAAABAABBABAAFAAAggAAAABAIAEIAACIARAAAgAE=</HashCode>
+      <FileName>BST.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HashTable">
+    <Position X="2" Y="0.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAgAABAAgAOAAAAAEAAIQAAAAIBAAAAAAAAAEA=</HashCode>
+      <FileName>HashTable.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="DATA">
+    <Position X="6.75" Y="4.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>BST.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

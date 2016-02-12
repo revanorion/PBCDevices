@@ -47,25 +47,22 @@ void HashTable::Print_Hash_Table_to_File(const string & filename) {
 }
 
 void HashTable::Print_Hash_Table_to_Excel(const string & filename) {
-	Book* book = xlCreateBook();
+	WorkBook^ book = gcnew WorkBook();
 	string file = filename;
 	if (book) {
-		Sheet* sheet = book->addSheet(L"Sheet1");
-		if (sheet) {
+		//add some sheet name
+		
 			for (int x = 0; x < 27; x++)
-				hash_table[x].writeToExcel(book,sheet);
+				hash_table[x].writeToExcel(book);
 		}
 
 		if (file.find(".xls")==string::npos || file.substr(file.length() - 4) != ".xls")
 			file +=".xls";
-		std::wstring widestr = std::wstring(file.begin(), file.end());
-		const wchar_t* widecstr = widestr.c_str();
+	
+		book->write(gcnew System::String(file.c_str()));
 
-
-		book->save(widecstr);
-		book->release();
 	}
-}
+
 
 
 void HashTable::read_tool_text(const string & s) {
@@ -116,74 +113,57 @@ void HashTable::read_tool_text(const string & s) {
 }
 void HashTable::read_xls_data(const string & s)
 {
-	Book* book;
-	if(s.find(".xlxs")!=std::string::npos)
-		book = xlCreateXMLBook();
+	WorkBook^ book= gcnew WorkBook();
+	if(s.find(".xlsx")!=std::string::npos)
+		book->readXLSX(gcnew System::String(s.c_str()));
 	else
-		book = xlCreateBook();
-	std::wstring widestr = std::wstring(s.begin(), s.end());
-	const wchar_t* widecstr = widestr.c_str();
-
-
-
-	if (book->load(widecstr))
+		book->read(gcnew System::String(s.c_str()));
+	
+	int numsheets = 0;// only first sheet book->NumSheets;
+	for (int sheetIndex = 0; sheetIndex < numsheets; sheetIndex++)
 	{
-		Sheet* sheet = book->getSheet(0);
-		if (sheet)
+		//select sheet
+		book->Sheet = sheetIndex;
+		string sheetName = msclr::interop::marshal_as<std::string>(book->getSheetName(sheetIndex));
+		//get the last row of this sheet.
+		int lastRow = book->LastRow;
+		for (int rowIndex = 0; rowIndex <= lastRow; rowIndex++)
 		{
-			
-			for (int row = sheet->firstRow(); row < sheet->lastRow(); ++row)
+			//get the last column of this row.
+			int lastColForRow = book->getLastColForRow(rowIndex);
+			for (int colIndex = 0; colIndex <= lastColForRow; colIndex++)
 			{
-
-				for (int col = sheet->firstCol(); col < 4; ++col)
+				double n;
+				std::string t, f;
+				int type = book->getType(rowIndex, colIndex);
+				if (type < 0)
 				{
-					CellType cellType = sheet->cellType(row, col);
-					//std::wcout << "(" << row << ", " << col << ") = ";
-					if (sheet->isFormula(row, col))
-					{
-						const wchar_t* s = sheet->readFormula(row, col);
-						std::wcout << (s ? s : L"null") << " [formula]\n";
-					}
-					else
-					{
-						switch (cellType)
-						{
-						//case CELLTYPE_EMPTY: std::wcout << "[empty]"; break;
-						case CELLTYPE_NUMBER:
-						{
-							double d = sheet->readNum(row, col);
-							if(d!=0)
-							std::wcout << d << " [number]\n";
-							break;
-						}
-						case CELLTYPE_STRING:
-						{
-							
-							const wchar_t* s = sheet->readStr(row, col);
-							if (s != NULL)
-								wcout << s << " [string]\n";
-							//std::wcout << (s ? s : L"null") << " [string]\n";
-							break;
-						}
-						case CELLTYPE_BOOLEAN:
-						{
-							bool b = sheet->readBool(row, col);
-							std::wcout << (b ? "true" : "false") << " [boolean]\n";
-							break;
-						}
-						default:
-							if (sheet->readStr(row, col) != NULL)
-								wcout << sheet->readStr(row, col) << " [string]\n";
-							break;
-						//case CELLTYPE_BLANK: std::wcout << "[blank]"; break;
-						//case CELLTYPE_ERROR: std::wcout << "[error]"; break;
-						}
-					}
-					//std::wcout << std::endl;
+					f = msclr::interop::marshal_as<std::string>(book->getFormula(rowIndex, colIndex));
+					type -= 0;
+				}
+				switch (type)
+				{
+
+				case WorkBook::TypeNumber:
+					n = book->getNumber(rowIndex, colIndex);
+					cout << n << endl;
+					continue;
+
+				case WorkBook::TypeText:
+					t = msclr::interop::marshal_as<std::string>(book->getText(rowIndex, colIndex));
+					cout << t << endl;
+					continue;
+
+				case WorkBook::TypeLogical:
+				case WorkBook::TypeError:
+					n = book->getNumber(rowIndex, colIndex);
+					continue;
+
+				case WorkBook::TypeEmpty:
+					continue;
 				}
 			}
 		}
 	}
-	else { cout << "cannot open book " << widecstr << endl; }
-	book->release();
+
 }

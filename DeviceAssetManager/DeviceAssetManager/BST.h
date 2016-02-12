@@ -4,8 +4,12 @@
 #include <fstream>
 #include <string>
 #include <memory>
-#include "libxl.h"
-using namespace libxl;
+
+#using <SX.dll>
+#include <msclr\marshal_cppstd.h>
+
+
+using namespace SmartXLS;
 using namespace std;
 
 struct DATA{
@@ -43,7 +47,7 @@ private:
 class Dump_BST
 {
 public:
-	Dump_BST() :root(0) { if (rowNumber == NULL || colomnNumber == NULL) rowNumber = 1; colomnNumber = 0; };
+	Dump_BST() :root(0) { if (rowNumber == NULL || colomnNumber == NULL) rowNumber = colomnNumber = 1; };
 	Dump_BST(const Dump_BST &x) { if (x.root != 0) copy(root, x.root); };//Copy Constructor
 	~Dump_BST() {  };//while (root != 0) { del(root); } };
 	void insert(const string & dev, const string & x) { insert(dev, x, root); };
@@ -61,11 +65,11 @@ public:
 			writeToFile(root, myfile);
 		}
 	}
-	void writeToExcel(Book*& a, Sheet*& b)
+	void writeToExcel(WorkBook^ a)
 	{
-		if (a && b)
+		if (a)
 		{
-			writeToExcel(root, a, b);
+			writeToExcel(root, a);
 		}
 	};
 	friend class HashTable;
@@ -79,8 +83,8 @@ private:
 	void insertDup(const string &, const string &, shared_ptr<BST_NODE>&);
 	shared_ptr<BST_NODE>& search(const string &, shared_ptr<BST_NODE>&);
 	void writeToFile(shared_ptr<BST_NODE>&, ofstream&);
-	void writeToExcel(shared_ptr<BST_NODE>&, Book*&, Sheet*&);
-	void writeToExcelSlave(shared_ptr<BST_NODE>&, Book*&, Sheet*&);
+	void writeToExcel(shared_ptr<BST_NODE>&, WorkBook^);
+	void writeToExcelSlave(shared_ptr<BST_NODE>&, WorkBook^);
 	void writeToFileSD(shared_ptr<BST_NODE>&, ofstream&);
 	void remove(const string &, shared_ptr<BST_NODE>&);
 	void print(shared_ptr<BST_NODE>&);

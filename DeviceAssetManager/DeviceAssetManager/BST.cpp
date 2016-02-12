@@ -79,46 +79,43 @@ void Dump_BST::printNode(shared_ptr<BST_NODE>& branch)
 }
 
 
-void Dump_BST::writeToExcel(shared_ptr<BST_NODE>& branch, Book*& book, Sheet*& sheet) 
+void Dump_BST::writeToExcel(shared_ptr<BST_NODE>& branch, WorkBook^ book) 
 {
-	if (branch!=0 && book && sheet)
+	if (branch!=0 && book)
 	{
-		writeToExcel(branch->left_child, book, sheet);
+		writeToExcel(branch->left_child, book);
+
+		book->setText(rowNumber, colomnNumber, gcnew System::String(branch->device.c_str()));
 
 
-		std::wstring widestr = std::wstring(branch->device.begin(), branch->device.end());
-		const wchar_t* widecstr = widestr.c_str();
-		sheet->writeStr(rowNumber, colomnNumber, widecstr);
+
+
 
 		colomnNumber++;
-		widestr = std::wstring(branch->SN.begin(), branch->SN.end());
-		widecstr = widestr.c_str();
-		sheet->writeStr(rowNumber, colomnNumber, widecstr);
+		book->setText(rowNumber, colomnNumber, gcnew System::String(branch->SN.c_str()));
 
 		if (branch->slaves != 0)
-			writeToExcelSlave(branch->slaves, book, sheet);
+			writeToExcelSlave(branch->slaves, book);
 		colomnNumber = 1;
 		rowNumber++;
 
-		writeToExcel(branch->right_child, book, sheet);
+		writeToExcel(branch->right_child, book);
 	}
 
 }
 
 
-void Dump_BST::writeToExcelSlave(shared_ptr<BST_NODE>& branch, Book*& book, Sheet*& sheet)
+void Dump_BST::writeToExcelSlave(shared_ptr<BST_NODE>& branch, WorkBook^ book)
 {
-	if (branch != 0 && book && sheet)
+	if (branch != 0 && book)
 	{
-		writeToExcelSlave(branch->left_child, book, sheet);
+		writeToExcelSlave(branch->left_child, book);
 
 
 		rowNumber++;
-		std::wstring widestr = std::wstring(branch->SN.begin(), branch->SN.end());
-		const wchar_t* widecstr = widestr.c_str();
-		sheet->writeStr(rowNumber, colomnNumber, widecstr);
+		book->setText(rowNumber, colomnNumber, gcnew System::String(branch->SN.c_str()));
 
-		writeToExcelSlave(branch->right_child, book, sheet);
+		writeToExcelSlave(branch->right_child, book);
 	}
 
 }
