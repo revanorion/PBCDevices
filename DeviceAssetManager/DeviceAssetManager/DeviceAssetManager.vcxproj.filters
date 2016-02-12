@@ -51,5 +51,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />
+    <None Include="FY 2016 20160114.xlsx">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="newfile.xls">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

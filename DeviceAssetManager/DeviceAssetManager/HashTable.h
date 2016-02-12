@@ -119,7 +119,7 @@ void HashTable::read_xls_data(const string & s)
 	else
 		book->read(gcnew System::String(s.c_str()));
 	
-	int numsheets = 0;// only first sheet book->NumSheets;
+	int numsheets = 1;// only first sheet book->NumSheets;
 	for (int sheetIndex = 0; sheetIndex < numsheets; sheetIndex++)
 	{
 		//select sheet
@@ -127,11 +127,12 @@ void HashTable::read_xls_data(const string & s)
 		string sheetName = msclr::interop::marshal_as<std::string>(book->getSheetName(sheetIndex));
 		//get the last row of this sheet.
 		int lastRow = book->LastRow;
-		for (int rowIndex = 0; rowIndex <= lastRow; rowIndex++)
+
+		for (int rowIndex = book->find(0, 0, "Asset #")->Row1+1; rowIndex <= lastRow; rowIndex++)
 		{
 			//get the last column of this row.
 			int lastColForRow = book->getLastColForRow(rowIndex);
-			for (int colIndex = 0; colIndex <= lastColForRow; colIndex++)
+			for (int colIndex = book->find(0, 0, "Asset #")->Col1; colIndex <= lastColForRow; colIndex++)
 			{
 				double n;
 				std::string t, f;
