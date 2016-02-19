@@ -10,7 +10,9 @@ public:
 	Serial_NODE(const string & sn, shared_ptr<BST_NODE>& p)
 		: SN(sn), right_child(0), left_child(0), parent(p) {};
 
-
+	shared_ptr<Serial_NODE>& get_left_child() { return left_child; };
+	shared_ptr<Serial_NODE>& get_right_child() { return right_child; };
+	shared_ptr<BST_NODE>& get_dump_parent() { return parent; };
 	string & get_SN() { return SN; };
 
 	~Serial_NODE() {
@@ -48,8 +50,7 @@ protected:
 	void del(shared_ptr<Serial_NODE>&);
 	shared_ptr<Serial_NODE> inorder_succ(const shared_ptr<Serial_NODE>& loc_ptr);
 	void copy(shared_ptr<Serial_NODE>& root, const shared_ptr<Serial_NODE>& copyN);
-
-
+	
 
 
 public:
@@ -59,9 +60,11 @@ public:
 	void insert(shared_ptr<Serial_NODE>& x) { insert(x, root); };
 	shared_ptr<Serial_NODE>& insert(const string & s, shared_ptr<BST_NODE>& x) { return insert(s, x, root); };
 	shared_ptr<Serial_NODE>& search(const string & x) { return search(x, root); };
+	
 	void remove(const string & x) { remove(x, root); };
 	void Update(const string & s);//{ cout << "   Inside Client_Info_BST Update\n"; };
 	void print() { print(root); cout << endl; };
+
 	void del(const string & x) { del(search(x)); };
 	void writeToFile(const string & filename) {
 		ofstream myfile;
@@ -71,5 +74,8 @@ public:
 			writeToFile(root, myfile);
 		}
 	}
+
+	friend class HashTable;
+
 };
 #endif

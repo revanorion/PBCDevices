@@ -22,6 +22,12 @@ int main()
 	DataDump.Print_Serial_list_to_File("serialList.txt");
 	DataDump.Print_Hash_Table_to_File("MyList.txt");
 	e.print();
+	vector<shared_ptr<BST_NODE>> nodeList = DataDump.compare(e.get_root());
+	while (!nodeList.empty())
+	{
+		cout << nodeList.back()->get_Asset()<<" " << nodeList.back()->get_SN() << endl;
+		nodeList.pop_back();
+	}
 	//_CrtDumpMemoryLeaks();
 	DataDump.Print_Hash_Table_to_Excel("newfile");
 	//DataDump.read_xls_data("newfile.xls");

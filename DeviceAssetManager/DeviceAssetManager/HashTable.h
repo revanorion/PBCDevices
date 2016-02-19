@@ -18,12 +18,13 @@ public:
 	void read_tool_text(const string & s);
 	void Print_Serials() { serialList.print(); };
 	void Print_BST(const string & s) { hash_table[hash(s)].print(); };//Print a BST (cell in hash table) inorder to the screen      
-	shared_ptr<BST_NODE>& compare(shared_ptr<BST_NODE>&) {};
+	vector<shared_ptr<BST_NODE>>& compare(shared_ptr<BST_NODE>&branch);
 	void Print_Hash_Table_to_File(const string & filename) {	for (int x = 0; x < 27; x++)	hash_table[x].writeToFile(filename);	};	//function will print hash table to output file         
 	void Print_Serial_list_to_File(const string & filename) { 	serialList.writeToFile(filename); };
 	void Print_Hash_Table_to_Excel(const string & filename);
 private:
-
+	void compare(shared_ptr<BST_NODE>&, shared_ptr<Serial_NODE>&, vector<shared_ptr<BST_NODE>>&);
+	void compare_branch(shared_ptr<BST_NODE>&, shared_ptr<Serial_NODE>&, vector<shared_ptr<BST_NODE>>&);
 	Dump_BST *hash_table;
 	Serial_BST serialList;
 };

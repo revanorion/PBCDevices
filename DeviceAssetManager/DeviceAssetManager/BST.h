@@ -37,6 +37,10 @@ public:
 	string & get_SN() { return SN; };
 	string & get_Asset() { return asset; };
 	shared_ptr<BST_NODE>& get_slaves() { return slaves; };
+	shared_ptr<BST_NODE>& get_left_child() { return left_child; };
+	shared_ptr<BST_NODE>& get_right_child() { return right_child; };
+	shared_ptr<BST_NODE>& get_excel_link() { return excel_link; };
+	void set_excel_link(shared_ptr<BST_NODE>& link) { excel_link = link; };
 	DATA & get_data() { return db; };
 	~BST_NODE() {
 		cout << "Deleting device: " << device << " SN: " << SN << endl;
@@ -49,6 +53,7 @@ private:
 	shared_ptr<BST_NODE> left_child;
 	shared_ptr<BST_NODE> duplicates;
 	shared_ptr<BST_NODE> slaves;
+	shared_ptr<BST_NODE> excel_link;
 	string device, SN, asset;
 	DATA db;
 };
@@ -86,6 +91,7 @@ public:
 	~Dump_BST() {  };//while (root != 0) { del(root); } };
 	shared_ptr<BST_NODE>& insert(shared_ptr<BST_NODE>& x) { return insert(x, root); };
 	shared_ptr<BST_NODE>& insert(const string & dev, const string & x) { return insert(dev, x, root); };
+	shared_ptr<BST_NODE>& get_root() { return root; };
 	void insertSlave(const string & dev, const string & x) { insertSlave(dev, x, root); };
 	shared_ptr<BST_NODE>& search(const string & x) { return search(x, root); };
 	void remove(const string & x) { remove(x, root); };
@@ -124,6 +130,7 @@ public:
 	~Excel_BST() {};
 	void insert(shared_ptr<BST_NODE>& x) { insert(x, root); };
 	void insert(shared_ptr<BST_NODE>& node, shared_ptr<BST_NODE>& branch);
+	
 	void print() { print(root); };
 private:
 	void print(shared_ptr<BST_NODE>&);

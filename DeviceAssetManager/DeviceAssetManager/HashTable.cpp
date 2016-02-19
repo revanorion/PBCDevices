@@ -27,7 +27,83 @@ void HashTable::Print_Hash_Table_to_Excel(const string & filename) {
 
 }
 
+bool searchSlaves(shared_ptr<BST_NODE>&branch, shared_ptr<Serial_NODE>&node)
+{
+	if (branch != 0)
+	{
+		if (branch->get_SN() == node->get_SN())
+			return true;
+		else if (branch->get_SN() > node->get_SN())
+			return searchSlaves(branch->get_left_child(), node);
+		else if (branch->get_SN() < node->get_SN())
+			return searchSlaves(branch->get_right_child(), node);
+		else
+			return false;
+	}
+}
 
+void HashTable::compare(shared_ptr<BST_NODE>&branch, shared_ptr<Serial_NODE>&node, vector<shared_ptr<BST_NODE>>& comparableSerials)
+{
+	// TODO: insert return statement here
+	if (branch != 0)
+	{
+		compare(branch, node->get_left_child(), comparableSerials);
+		if (node->get_SN() == branch->get_SN())
+		{
+			comparableSerials.push_back(branch);
+			node->get_dump_parent()->set_excel_link(branch);
+			
+		}
+		else {
+			if (branch->get_slaves() != 0)
+			{
+				if (searchSlaves(branch->get_slaves(), node))
+				{
+					comparableSerials.push_back(branch);
+					node->get_dump_parent()->set_excel_link(branch);
+				}
+			}
+			if (branch->get_SN() > node->get_SN())
+				compare_branch(branch->get_left_child(), node, comparableSerials);
+			else if (branch->get_SN() < node->get_SN())
+				compare_branch(branch->get_right_child(), node, comparableSerials);
+			
+		}
+		compare(branch, node->get_right_child(), comparableSerials);
+	}
+
+}
+
+void HashTable::compare_branch(shared_ptr<BST_NODE>&branch, shared_ptr<Serial_NODE>&node, vector<shared_ptr<BST_NODE>>& comparableSerials)
+{
+	// TODO: insert return statement here
+	if (branch != 0)
+	{
+		if (node->get_SN() == branch->get_SN())
+		{
+			comparableSerials.push_back(branch);
+			node->get_dump_parent()->set_excel_link(branch);
+			
+		}
+		else {
+			if (branch->get_slaves() != 0)
+			{
+				if (searchSlaves(branch->get_slaves(), node))
+				{
+					comparableSerials.push_back(branch);
+					node->get_dump_parent()->set_excel_link(branch);
+				}
+			}
+			if (branch->get_SN() > node->get_SN())
+				 compare_branch(branch->get_left_child(), node, comparableSerials);
+			else if (branch->get_SN() < node->get_SN())
+				 compare_branch(branch->get_right_child(), node, comparableSerials);
+			
+		}
+
+	}
+
+}
 
 void HashTable::read_tool_text(const string & s) {
 
@@ -81,4 +157,11 @@ void HashTable::read_tool_text(const string & s) {
 
 
 
+}
+
+vector<shared_ptr<BST_NODE>>& HashTable::compare(shared_ptr<BST_NODE>& branch)
+{
+	vector<shared_ptr<BST_NODE>> x;
+	compare(branch, serialList.root,x);
+	return x;
 }
