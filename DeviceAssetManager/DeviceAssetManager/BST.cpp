@@ -35,6 +35,25 @@ void Dump_BST::print(shared_ptr<BST_NODE>& branch)
 	}
 }
 
+void Excel_BST::print(shared_ptr<BST_NODE>& branch)
+{
+	if (branch != 0)
+	{
+		print(branch->left_child);
+
+
+		//cout << "Asset\tSerial\tDivison\tDescription\tModel\tAsset Type\tLocation\tOwner\tNotes\n";
+		if (branch->db.Notes != "")
+			cout << branch->asset << "\t" << branch->SN << "\t" << branch->db.ISS_Divison << "\t" << branch->db.Description << "\t" << branch->db.Model
+			<< "\t" << branch->db.Asset_Type << "\t" << branch->db.Physical_Location << "\t" << branch->db.FATS_Owner << "\t" << branch->db.Notes << "\n\n";
+		else
+			cout << branch->SN << "\n\n";
+
+
+
+		print(branch->right_child);
+	}
+}
 
 
 
@@ -175,7 +194,7 @@ void Dump_BST::writeToFileSD(shared_ptr<BST_NODE>& branch, ofstream& myfile)
 	}
 }
 
-void Dump_BST::insert(const string & dev, const string & x, shared_ptr<BST_NODE>& branch)
+shared_ptr<BST_NODE>& Dump_BST::insert(const string & dev, const string & x, shared_ptr<BST_NODE>& branch)
 {
 	string device = dev,slave="", serials=x, sn;
 	while ((serials.find_first_of(" ") != std::string::npos && serials[serials.find_first_of(" ")+1]==',') || serials.back()==' ')
@@ -211,27 +230,111 @@ void Dump_BST::insert(const string & dev, const string & x, shared_ptr<BST_NODE>
 					} while (serials != "");
 				}
 			}
+			return branch;
 		}
 
 	
 	else {
 		if (branch->device > device && branch->device != device)
 		{
-			insert(dev, serials, branch->left_child);
-			return;
+			return insert(dev, serials, branch->left_child);
+			
 		}
 		else if (branch->device < device && branch->device != device)
 		{
-			insert(dev, serials, branch->right_child);
-			return;
+			return insert(dev, serials, branch->right_child);
+			
 		}
 		else
 		{
 			cout << "No Dupes masters!\t " << dev << " " << serials << "\n";
+			return branch;
+		}
+	}
+}
+
+
+
+
+
+
+
+shared_ptr<BST_NODE>& Dump_BST::insert(shared_ptr<BST_NODE>& node, shared_ptr<BST_NODE>& branch)
+{
+	if (branch == 0)
+	{
+		return branch = node;
+		
+	}
+
+
+	else {
+		if (branch->device > node->device && branch->device != node->device)
+		{
+			return insert(node, branch->left_child);
+
+		}
+		else if (branch->device < node->device && branch->device != node->device)
+		{
+			return insert(node, branch->right_child);
+	
+		}
+		else
+		{
+			cout << "No Dupes nodes!\n";
+			return branch;
+		}
+	}
+}
+
+
+void Excel_BST::insert(shared_ptr<BST_NODE>& node, shared_ptr<BST_NODE>& branch)
+{
+	if (branch == 0)
+	{
+		branch = node;
+
+	}
+
+
+	else {
+		if (branch->asset > node->asset && branch->asset != node->asset)
+		{
+			insert(node, branch->left_child);
+			return;
+		}
+		else if (branch->asset < node->asset && branch->asset != node->asset)
+		{
+			insert(node, branch->right_child);
+			return;
+		}
+		else
+		{
+			cout << "No Dupes nodes!\n";
 			return;
 		}
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 int Dump_BST::insertSlave(const string & dev, const string & x, shared_ptr<BST_NODE>& branch)
 {

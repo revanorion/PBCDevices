@@ -151,12 +151,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BST.cpp" />
+    <ClCompile Include="HashTable.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="SerialBST.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BST.h" />
     <ClInclude Include="HashTable.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="SerialBST.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Dump.txt" />
