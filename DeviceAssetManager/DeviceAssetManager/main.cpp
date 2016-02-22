@@ -15,14 +15,15 @@ int main()
 	
 
 
-
-
+	
 	DataDump.read_tool_text("Dump.txt");
 	read_xls_data(e,"FY 2016 20160114.xlsx");
 	DataDump.Print_Serial_list_to_File("serialList.txt");
 	DataDump.Print_Hash_Table_to_File("MyList.txt");
 	e.print();
-	vector<shared_ptr<BST_NODE>> nodeList = DataDump.compare(e.get_root());
+
+	vector<shared_ptr<BST_NODE>> nodeList;
+	DataDump.compare(e.get_root(),nodeList);
 	while (!nodeList.empty())
 	{
 		cout << nodeList.back()->get_Asset()<<" " << nodeList.back()->get_SN() << endl;

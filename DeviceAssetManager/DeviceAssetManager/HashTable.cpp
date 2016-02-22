@@ -45,7 +45,7 @@ bool searchSlaves(shared_ptr<BST_NODE>&branch, shared_ptr<Serial_NODE>&node)
 void HashTable::compare(shared_ptr<BST_NODE>&branch, shared_ptr<Serial_NODE>&node, vector<shared_ptr<BST_NODE>>& comparableSerials)
 {
 	// TODO: insert return statement here
-	if (branch != 0)
+	if (branch != 0 && node!=0)
 	{
 		compare(branch, node->get_left_child(), comparableSerials);
 		if (node->get_SN() == branch->get_SN())
@@ -159,9 +159,9 @@ void HashTable::read_tool_text(const string & s) {
 
 }
 
-vector<shared_ptr<BST_NODE>>& HashTable::compare(shared_ptr<BST_NODE>& branch)
+void HashTable::compare(shared_ptr<BST_NODE>& branch, vector<shared_ptr<BST_NODE>>& x)
 {
-	vector<shared_ptr<BST_NODE>> x;
+
 	compare(branch, serialList.root,x);
-	return x;
+
 }
