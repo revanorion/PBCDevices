@@ -1,5 +1,9 @@
 #include "SerialBST.h"
 
+unsigned int Serial_BST::rowNumber;
+unsigned int Serial_BST::colomnNumber;
+
+
 
 shared_ptr<Serial_NODE>& Serial_BST::insert(const string &SN, shared_ptr<BST_NODE>& parent, shared_ptr<Serial_NODE>& branch)
 {
@@ -61,8 +65,22 @@ void Serial_BST::writeToFile(shared_ptr<Serial_NODE>& branch, ofstream & myfile)
 
 }
 
-void Serial_BST::writeToExcel(shared_ptr<Serial_NODE>&, WorkBook ^)
+void Serial_BST::writeToExcel(shared_ptr<Serial_NODE>&branch, WorkBook ^book)
 {
+
+	if (branch != 0 && book)
+	{
+		writeToExcel(branch->left_child, book);
+
+		book->setText(rowNumber, colomnNumber, gcnew System::String(branch->SN.c_str()));
+
+		rowNumber++;
+
+		writeToExcel(branch->right_child, book);
+	}
+
+
+
 }
 
 void Serial_BST::remove(const string &, shared_ptr<Serial_NODE>&)
@@ -98,3 +116,4 @@ void Serial_BST::copy(shared_ptr<Serial_NODE>& root, const shared_ptr<Serial_NOD
 void Serial_BST::Update(const string & s)
 {
 }
+

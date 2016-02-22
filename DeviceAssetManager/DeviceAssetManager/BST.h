@@ -122,17 +122,4 @@ public:
 
 
 
-
-class Excel_BST : public virtual Dump_BST
-{
-public:
-	Excel_BST() { };
-	~Excel_BST() {};
-	void insert(shared_ptr<BST_NODE>& x) { insert(x, root); };
-	void insert(shared_ptr<BST_NODE>& node, shared_ptr<BST_NODE>& branch);
-	
-	void print() { print(root); };
-private:
-	void print(shared_ptr<BST_NODE>&);
-};
 #endif

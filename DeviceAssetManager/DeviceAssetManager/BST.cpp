@@ -35,25 +35,6 @@ void Dump_BST::print(shared_ptr<BST_NODE>& branch)
 	}
 }
 
-void Excel_BST::print(shared_ptr<BST_NODE>& branch)
-{
-	if (branch != 0)
-	{
-		print(branch->left_child);
-
-
-		//cout << "Asset\tSerial\tDivison\tDescription\tModel\tAsset Type\tLocation\tOwner\tNotes\n";
-		if (branch->db.Notes != "")
-			cout << branch->asset << "\t" << branch->SN << "\t" << branch->db.ISS_Divison << "\t" << branch->db.Description << "\t" << branch->db.Model
-			<< "\t" << branch->db.Asset_Type << "\t" << branch->db.Physical_Location << "\t" << branch->db.FATS_Owner << "\t" << branch->db.Notes << "\n\n";
-		else
-			cout << branch->SN << "\n\n";
-
-
-
-		print(branch->right_child);
-	}
-}
 
 
 
@@ -67,21 +48,6 @@ void Dump_BST::printSD(shared_ptr<BST_NODE>& branch)
 		printSD(branch->right_child);
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 void Dump_BST::printNode(shared_ptr<BST_NODE>& branch)
 {
@@ -286,52 +252,6 @@ shared_ptr<BST_NODE>& Dump_BST::insert(shared_ptr<BST_NODE>& node, shared_ptr<BS
 		}
 	}
 }
-
-
-void Excel_BST::insert(shared_ptr<BST_NODE>& node, shared_ptr<BST_NODE>& branch)
-{
-	if (branch == 0)
-	{
-		branch = node;
-
-	}
-
-
-	else {
-		if (branch->asset > node->asset && branch->asset != node->asset)
-		{
-			insert(node, branch->left_child);
-			return;
-		}
-		else if (branch->asset < node->asset && branch->asset != node->asset)
-		{
-			insert(node, branch->right_child);
-			return;
-		}
-		else
-		{
-			cout << "No Dupes nodes!\n";
-			return;
-		}
-	}
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

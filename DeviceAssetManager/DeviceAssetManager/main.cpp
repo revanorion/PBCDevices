@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <crtdbg.h>
 #include "HashTable.h"
-
+#include "ExcelBST.h"
 
 void read_xls_data(Excel_BST& e, const string & s);
 
@@ -21,6 +21,8 @@ int main()
 	DataDump.Print_Serial_list_to_File("serialList.txt");
 	DataDump.Print_Hash_Table_to_File("MyList.txt");
 	e.print();
+	e.writeToExcel("ExcelList.xls");
+
 
 	vector<shared_ptr<BST_NODE>> nodeList;
 	DataDump.compare(e.get_root(),nodeList);
@@ -31,6 +33,7 @@ int main()
 	}
 	//_CrtDumpMemoryLeaks();
 	DataDump.Print_Hash_Table_to_Excel("newfile");
+	DataDump.Print_Serial_list_to_File("AllSerials.xls");
 	//DataDump.read_xls_data("newfile.xls");
 	cout << "Hello worl1\n";
 	return 0;

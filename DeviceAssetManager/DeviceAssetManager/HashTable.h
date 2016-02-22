@@ -6,7 +6,7 @@ class HashTable
 {
 public:
 
-	HashTable() { hash_table = new Dump_BST[27]; }; //default constructor will read data from input file "client_address_data.txt".
+	HashTable() { hash_table = new Dump_BST[27]; serialList=make_shared<Serial_BST>(); }; //default constructor will read data from input file "client_address_data.txt".
 	HashTable(const HashTable &);//Copy Constructor
 
 	~HashTable() { delete[]hash_table; };
@@ -16,17 +16,18 @@ public:
 	void Print_Hash_Table() { for (int x = 1; x < 27; x++) hash_table[x].print(); };
 	void inline Update(const string & x) { hash_table[hash(x.substr(2))].Update(x); };
 	void read_tool_text(const string & s);
-	void Print_Serials() { serialList.print(); };
+	void Print_Serials() { serialList->print(); };
 	void Print_BST(const string & s) { hash_table[hash(s)].print(); };//Print a BST (cell in hash table) inorder to the screen      
 	void compare(shared_ptr<BST_NODE>&branch, vector<shared_ptr<BST_NODE>>&);
 	void Print_Hash_Table_to_File(const string & filename) {	for (int x = 0; x < 27; x++)	hash_table[x].writeToFile(filename);	};	//function will print hash table to output file         
-	void Print_Serial_list_to_File(const string & filename) { 	serialList.writeToFile(filename); };
+	void Print_Serial_list_to_File(const string & filename) { 	serialList->writeToFile(filename); };
 	void Print_Hash_Table_to_Excel(const string & filename);
+	void Print_serials_to_Excel(const string & filename);
 private:
 	void compare(shared_ptr<BST_NODE>&, shared_ptr<Serial_NODE>&, vector<shared_ptr<BST_NODE>>&);
 	void compare_branch(shared_ptr<BST_NODE>&, shared_ptr<Serial_NODE>&, vector<shared_ptr<BST_NODE>>&);
 	Dump_BST *hash_table;
-	Serial_BST serialList;
+	shared_ptr<Serial_BST> serialList;
 };
 
 

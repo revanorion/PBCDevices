@@ -27,6 +27,24 @@ void HashTable::Print_Hash_Table_to_Excel(const string & filename) {
 
 }
 
+void HashTable::Print_serials_to_Excel(const string & filename)
+{
+	WorkBook^ book = gcnew WorkBook();
+	string file = filename;
+	if (book) {
+
+		serialList->writeToExcel(book);
+	}
+
+	if (file.find(".xls") == string::npos || file.substr(file.length() - 4) != ".xls")
+		file += ".xls";
+
+	book->write(gcnew System::String(file.c_str()));
+
+
+
+}
+
 bool searchSlaves(shared_ptr<BST_NODE>&branch, shared_ptr<Serial_NODE>&node)
 {
 	if (branch != 0)
@@ -42,68 +60,99 @@ bool searchSlaves(shared_ptr<BST_NODE>&branch, shared_ptr<Serial_NODE>&node)
 	}
 }
 
+
 void HashTable::compare(shared_ptr<BST_NODE>&branch, shared_ptr<Serial_NODE>&node, vector<shared_ptr<BST_NODE>>& comparableSerials)
 {
-	// TODO: insert return statement here
-	if (branch != 0 && node!=0)
-	{
-		compare(branch, node->get_left_child(), comparableSerials);
-		if (node->get_SN() == branch->get_SN())
-		{
-			comparableSerials.push_back(branch);
-			node->get_dump_parent()->set_excel_link(branch);
-			
-		}
-		else {
-			if (branch->get_slaves() != 0)
-			{
-				if (searchSlaves(branch->get_slaves(), node))
-				{
-					comparableSerials.push_back(branch);
-					node->get_dump_parent()->set_excel_link(branch);
-				}
-			}
-			if (branch->get_SN() > node->get_SN())
-				compare_branch(branch->get_left_child(), node, comparableSerials);
-			else if (branch->get_SN() < node->get_SN())
-				compare_branch(branch->get_right_child(), node, comparableSerials);
-			
-		}
-		compare(branch, node->get_right_child(), comparableSerials);
-	}
+	
 
 }
 
 void HashTable::compare_branch(shared_ptr<BST_NODE>&branch, shared_ptr<Serial_NODE>&node, vector<shared_ptr<BST_NODE>>& comparableSerials)
 {
-	// TODO: insert return statement here
-	if (branch != 0)
-	{
-		if (node->get_SN() == branch->get_SN())
-		{
-			comparableSerials.push_back(branch);
-			node->get_dump_parent()->set_excel_link(branch);
-			
-		}
-		else {
-			if (branch->get_slaves() != 0)
-			{
-				if (searchSlaves(branch->get_slaves(), node))
-				{
-					comparableSerials.push_back(branch);
-					node->get_dump_parent()->set_excel_link(branch);
-				}
-			}
-			if (branch->get_SN() > node->get_SN())
-				 compare_branch(branch->get_left_child(), node, comparableSerials);
-			else if (branch->get_SN() < node->get_SN())
-				 compare_branch(branch->get_right_child(), node, comparableSerials);
-			
-		}
-
-	}
+	
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//
+//void HashTable::compare(shared_ptr<BST_NODE>&branch, shared_ptr<Serial_NODE>&node, vector<shared_ptr<BST_NODE>>& comparableSerials)
+//{
+//	// TODO: insert return statement here
+//	if (branch != 0 && node!=0)
+//	{
+//		compare(branch, node->get_left_child(), comparableSerials);
+//		if (node->get_SN() == branch->get_SN())
+//		{
+//			comparableSerials.push_back(branch);
+//			node->get_dump_parent()->set_excel_link(branch);
+//			
+//		}
+//		else {
+//			if (branch->get_slaves() != 0)
+//			{
+//				if (searchSlaves(branch->get_slaves(), node))
+//				{
+//					comparableSerials.push_back(branch);
+//					node->get_dump_parent()->set_excel_link(branch);
+//				}
+//			}
+//			if (branch->get_SN() > node->get_SN())
+//				compare_branch(branch->get_left_child(), node, comparableSerials);
+//			else if (branch->get_SN() < node->get_SN())
+//				compare_branch(branch->get_right_child(), node, comparableSerials);
+//			
+//		}
+//		compare(branch, node->get_right_child(), comparableSerials);
+//	}
+//
+//}
+//
+//void HashTable::compare_branch(shared_ptr<BST_NODE>&branch, shared_ptr<Serial_NODE>&node, vector<shared_ptr<BST_NODE>>& comparableSerials)
+//{
+//	// TODO: insert return statement here
+//	if (branch != 0)
+//	{
+//		if (node->get_SN() == branch->get_SN())
+//		{
+//			comparableSerials.push_back(branch);
+//			node->get_dump_parent()->set_excel_link(branch);
+//			
+//		}
+//		else {
+//			if (branch->get_slaves() != 0)
+//			{
+//				if (searchSlaves(branch->get_slaves(), node))
+//				{
+//					comparableSerials.push_back(branch);
+//					node->get_dump_parent()->set_excel_link(branch);
+//				}
+//			}
+//			if (branch->get_SN() > node->get_SN())
+//				 compare_branch(branch->get_left_child(), node, comparableSerials);
+//			else if (branch->get_SN() < node->get_SN())
+//				 compare_branch(branch->get_right_child(), node, comparableSerials);
+//			
+//		}
+//
+//	}
+//
+//}
+//
+
 
 void HashTable::read_tool_text(const string & s) {
 
@@ -140,7 +189,7 @@ void HashTable::read_tool_text(const string & s) {
 				shared_ptr<BST_NODE> node = insert(deviceName, snL);
 				while (!serials.empty())
 				{
-					serialList.insert(serials.back(), node);
+					serialList->insert(serials.back(), node);
 					serials.pop_back();
 				}
 				snL = "";
@@ -162,6 +211,6 @@ void HashTable::read_tool_text(const string & s) {
 void HashTable::compare(shared_ptr<BST_NODE>& branch, vector<shared_ptr<BST_NODE>>& x)
 {
 
-	compare(branch, serialList.root,x);
+	compare(branch, serialList->root,x);
 
 }

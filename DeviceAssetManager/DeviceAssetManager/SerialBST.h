@@ -35,26 +35,11 @@ private:
 
 class Serial_BST
 {
-protected:
-	shared_ptr<Serial_NODE> root;
-	shared_ptr<Serial_NODE>& insert(const string &, shared_ptr<BST_NODE>&, shared_ptr<Serial_NODE>&);
-	void insert(shared_ptr<Serial_NODE>&, shared_ptr<Serial_NODE>&);
 
-	shared_ptr<Serial_NODE>& search(const string &, shared_ptr<Serial_NODE>&);
-	void writeToFile(shared_ptr<Serial_NODE>&, ofstream&);
-	void writeToExcel(shared_ptr<Serial_NODE>&, WorkBook^);
-
-	void remove(const string &, shared_ptr<Serial_NODE>&);
-	void print(shared_ptr<Serial_NODE>&);
-	void printNode(shared_ptr<Serial_NODE>&);
-	void del(shared_ptr<Serial_NODE>&);
-	shared_ptr<Serial_NODE> inorder_succ(const shared_ptr<Serial_NODE>& loc_ptr);
-	void copy(shared_ptr<Serial_NODE>& root, const shared_ptr<Serial_NODE>& copyN);
-	
 
 
 public:
-	Serial_BST() :root(0) {  };
+	Serial_BST() :root(0) { if (rowNumber == NULL || colomnNumber == NULL) rowNumber = colomnNumber = 1; };
 	Serial_BST(const Serial_BST &x) { if (x.root != 0) copy(root, x.root); };//Copy Constructor
 	~Serial_BST() {  };//while (root != 0) { del(root); } };
 	void insert(shared_ptr<Serial_NODE>& x) { insert(x, root); };
@@ -64,7 +49,7 @@ public:
 	void remove(const string & x) { remove(x, root); };
 	void Update(const string & s);//{ cout << "   Inside Client_Info_BST Update\n"; };
 	void print() { print(root); cout << endl; };
-
+	void writeToExcel(WorkBook^ book) { writeToExcel(root, book); };
 	void del(const string & x) { del(search(x)); };
 	void writeToFile(const string & filename) {
 		ofstream myfile;
@@ -76,6 +61,25 @@ public:
 	}
 
 	friend class HashTable;
+	static unsigned int rowNumber;
+	static unsigned int colomnNumber;
 
+private:
+	shared_ptr<Serial_NODE> root;
+	shared_ptr<Serial_NODE>& insert(const string &, shared_ptr<BST_NODE>&, shared_ptr<Serial_NODE>&);
+	void insert(shared_ptr<Serial_NODE>&, shared_ptr<Serial_NODE>&);
+
+	shared_ptr<Serial_NODE>& search(const string &, shared_ptr<Serial_NODE>&);
+	void writeToFile(shared_ptr<Serial_NODE>&, ofstream&);
+
+
+	void remove(const string &, shared_ptr<Serial_NODE>&);
+	void print(shared_ptr<Serial_NODE>&);
+	void printNode(shared_ptr<Serial_NODE>&);
+	void del(shared_ptr<Serial_NODE>&);
+	shared_ptr<Serial_NODE> inorder_succ(const shared_ptr<Serial_NODE>& loc_ptr);
+	void copy(shared_ptr<Serial_NODE>& root, const shared_ptr<Serial_NODE>& copyN);
+	void writeToExcel(shared_ptr<Serial_NODE>& branch, WorkBook^ book);
+		
 };
 #endif
