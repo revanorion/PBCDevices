@@ -22,12 +22,17 @@ public:
 	void Print_Hash_Table_to_File(const string & filename) {	for (int x = 0; x < 27; x++)	hash_table[x].writeToFile(filename);	};	//function will print hash table to output file         
 	void Print_Serial_list_to_File(const string & filename) { 	serialList->writeToFile(filename); };
 	void Print_Hash_Table_to_Excel(const string & filename);
+	void Print_Comparison_List_to_Excel(const string & filename);
 	void Print_serials_to_Excel(const string & filename);
+	shared_ptr<BST_NODE>& search_by_device(const string & y) { return search_by_device(hash(y), y); };
+	void set_comparison_list(vector<shared_ptr<BST_NODE>>& x) { comparisionList = x; };
 private:
 	void compare(shared_ptr<BST_NODE>&, shared_ptr<Serial_NODE>&, vector<shared_ptr<BST_NODE>>&);
 	void compare_branch(shared_ptr<BST_NODE>&, shared_ptr<Serial_NODE>&, vector<shared_ptr<BST_NODE>>&);
+	shared_ptr<BST_NODE>& search_by_device(const int & x, const string & y) { return hash_table[x].search(y); };
 	Dump_BST *hash_table;
 	shared_ptr<Serial_BST> serialList;
+	vector<shared_ptr<BST_NODE>> comparisionList;
 };
 
 

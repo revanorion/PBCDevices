@@ -7,14 +7,14 @@ class Serial_NODE
 {
 public:
 	Serial_NODE() :right_child(0), left_child(0), parent(0) { cout << "Constructor"; };
-	Serial_NODE(const string & sn, shared_ptr<BST_NODE>& p)
-		: SN(sn), right_child(0), left_child(0), parent(p) {};
+	Serial_NODE(const string & sn,const string & dev,shared_ptr<BST_NODE>& p)
+		: SN(sn), right_child(0), left_child(0), parent(p),device(dev) {};
 
 	shared_ptr<Serial_NODE>& get_left_child() { return left_child; };
 	shared_ptr<Serial_NODE>& get_right_child() { return right_child; };
 	shared_ptr<BST_NODE>& get_dump_parent() { return parent; };
 	string & get_SN() { return SN; };
-
+	string & get_device() { return device; };
 	~Serial_NODE() {
 		cout << "Deleting serial: " << SN << endl;
 	};
@@ -26,7 +26,7 @@ private:
 	shared_ptr<Serial_NODE> left_child;
 	shared_ptr<BST_NODE> parent;
 	string SN;
-
+	string device;
 };
 
 
@@ -43,7 +43,7 @@ public:
 	Serial_BST(const Serial_BST &x) { if (x.root != 0) copy(root, x.root); };//Copy Constructor
 	~Serial_BST() {  };//while (root != 0) { del(root); } };
 	void insert(shared_ptr<Serial_NODE>& x) { insert(x, root); };
-	shared_ptr<Serial_NODE>& insert(const string & s, shared_ptr<BST_NODE>& x) { return insert(s, x, root); };
+	shared_ptr<Serial_NODE>& insert(const string & s, const string & d, shared_ptr<BST_NODE>& x) { return insert(s,d, x, root); };
 	shared_ptr<Serial_NODE>& search(const string & x) { return search(x, root); };
 	
 	void remove(const string & x) { remove(x, root); };
@@ -66,7 +66,7 @@ public:
 
 private:
 	shared_ptr<Serial_NODE> root;
-	shared_ptr<Serial_NODE>& insert(const string &, shared_ptr<BST_NODE>&, shared_ptr<Serial_NODE>&);
+	shared_ptr<Serial_NODE>& insert(const string &, const string &, shared_ptr<BST_NODE>&, shared_ptr<Serial_NODE>&);
 	void insert(shared_ptr<Serial_NODE>&, shared_ptr<Serial_NODE>&);
 
 	shared_ptr<Serial_NODE>& search(const string &, shared_ptr<Serial_NODE>&);

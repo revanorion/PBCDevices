@@ -31,11 +31,11 @@ int main()
 		cout << nodeList.back()->get_Asset()<<" " << nodeList.back()->get_SN() << endl;
 		nodeList.pop_back();
 	}
-	//_CrtDumpMemoryLeaks();
+	DataDump.Print_Comparison_List_to_Excel("comparisionlist.xls");
 	DataDump.Print_Hash_Table_to_Excel("newfile");
 	DataDump.Print_Serial_list_to_File("AllSerials.xls");
-	//DataDump.read_xls_data("newfile.xls");
-	cout << "Hello worl1\n";
+
+	
 	return 0;
 }
 
@@ -63,7 +63,12 @@ void read_xls_data(Excel_BST& e, const string & s)
 			string divison = getObject(book, rowIndex, 2);
 			if (divison == "NETWORK")
 			{
-				shared_ptr<BST_NODE> node = make_shared<BST_NODE>(getObject(book, rowIndex, 4), getObject(book, rowIndex, 12), getObject(book, rowIndex, 0));
+				string asset = getObject(book, rowIndex, 0);
+				string device = getObject(book, rowIndex, 4);
+				string serial = getObject(book, rowIndex, 12);
+					
+
+				shared_ptr<BST_NODE> node = make_shared<BST_NODE>(device, serial, asset);
 				node->get_data().Asset_Type = getObject(book, rowIndex, 5);
 				node->get_data().Description = getObject(book, rowIndex, 3);
 				node->get_data().FATS_Owner = getObject(book, rowIndex, 13);
@@ -93,9 +98,9 @@ string inline getObject(WorkBook^ book, int rowIndex, int colIndex) {
 	{
 
 	case WorkBook::TypeNumber:
-		n = book->getNumber(rowIndex, colIndex);
+		n =floor( book->getNumber(rowIndex, colIndex));
 		//cout << n << endl;
-		return to_string(int(n));
+		return to_string(long long(n));
 
 	case WorkBook::TypeText:
 		t = msclr::interop::marshal_as<std::string>(book->getText(rowIndex, colIndex));

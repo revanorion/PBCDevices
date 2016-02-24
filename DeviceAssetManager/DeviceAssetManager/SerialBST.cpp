@@ -5,22 +5,22 @@ unsigned int Serial_BST::colomnNumber;
 
 
 
-shared_ptr<Serial_NODE>& Serial_BST::insert(const string &SN, shared_ptr<BST_NODE>& parent, shared_ptr<Serial_NODE>& branch)
+shared_ptr<Serial_NODE>& Serial_BST::insert(const string &SN, const string &dev, shared_ptr<BST_NODE>& parent, shared_ptr<Serial_NODE>& branch)
 {
 	if (branch == 0)
 	{
-		return branch = make_shared<Serial_NODE>(SN,parent);
+		return branch = make_shared<Serial_NODE>(SN,dev,parent);
 	}
 
 	else {
 		if (branch->SN > SN && branch->SN != SN)
 		{
-			return insert(SN,parent, branch->left_child);
+			return insert(SN,dev,parent, branch->left_child);
 			
 		}
 		else if (branch->SN <SN && branch->SN != SN)
 		{
-			return insert(SN,parent, branch->right_child);
+			return insert(SN,dev,parent, branch->right_child);
 			
 		}
 		else

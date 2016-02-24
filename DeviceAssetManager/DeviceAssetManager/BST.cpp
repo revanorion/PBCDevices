@@ -16,17 +16,19 @@ void Dump_BST::print(shared_ptr<BST_NODE>& branch)
 
 
 		cout << "+---" << branch->device;
-		if (branch->slaves != 0) {
+		if (!branch->slaves.empty()) {
 			cout << "\n|";
 			cout << "\t\\---" << branch->SN << "\n|";
 			cout << "\t\t\--- slaves\n|";
-			printSD(branch->slaves);
+			for (int x = 0; x < branch->slaves.size();x++)
+				cout << "\t\t\\---" << branch->slaves[x]->SN << "\n|";
 		}
 		else
 			cout << "\n|\t+---" << branch->SN << "\n|";
-		if (branch->duplicates != 0) {
+		if (!branch->duplicates.empty()) {
 			cout << "\t--- duplicates\n|";
-			printSD(branch->duplicates);
+			for (int x = 0; x < branch->duplicates.size(); x++)
+				cout << "\t\t\\---" << branch->duplicates[x]->SN << "\n|";
 		}
 
 
@@ -39,15 +41,6 @@ void Dump_BST::print(shared_ptr<BST_NODE>& branch)
 
 
 
-void Dump_BST::printSD(shared_ptr<BST_NODE>& branch)
-{
-	if (branch != 0)
-	{
-		printSD(branch->left_child);
-		cout << "\t\t\\---" << branch->SN << "\n|";
-		printSD(branch->right_child);
-	}
-}
 
 void Dump_BST::printNode(shared_ptr<BST_NODE>& branch)
 {
@@ -57,19 +50,29 @@ void Dump_BST::printNode(shared_ptr<BST_NODE>& branch)
 		cout << branch->device << endl;
 		cout << "| Master\t" << branch->SN << " " << branch->asset;
 		cout << endl;
-		if (branch->slaves != 0)
-			print(branch->slaves);
+		if (!branch->slaves.empty()) {
+			cout << "\n|";
+			cout << "\t\\---" << branch->SN << "\n|";
+			cout << "\t\t\--- slaves\n|";
+			for (int x = 0; x < branch->slaves.size(); x++)
+				cout << "\t\t\\---" << branch->slaves[x]->SN << "\n|";
+		}
+		if (!branch->duplicates.empty()) {
+			cout << "\t--- duplicates\n|";
+			for (int x = 0; x < branch->duplicates.size(); x++)
+				cout << "\t\t\\---" << branch->duplicates[x]->SN << "\n|";
+		}
 		
 	}
 }
 
-
+//need to write duplicates
 void Dump_BST::writeToExcel(shared_ptr<BST_NODE>& branch, WorkBook^ book) 
 {
 	if (branch!=0 && book)
 	{
 		writeToExcel(branch->left_child, book);
-
+	
 		book->setText(rowNumber, colomnNumber, gcnew System::String(branch->device.c_str()));
 
 
@@ -79,28 +82,20 @@ void Dump_BST::writeToExcel(shared_ptr<BST_NODE>& branch, WorkBook^ book)
 		colomnNumber++;
 		book->setText(rowNumber, colomnNumber, gcnew System::String(branch->SN.c_str()));
 
-		if (branch->slaves != 0)
-			writeToExcelSlave(branch->slaves, book);
-		colomnNumber = 1;
 		rowNumber++;
+		//int rowTop = rowNumber;
+		if (!branch->slaves.empty())
+			for (int x = 0; x < branch->slaves.size(); x++)
+			{
+				book->setText(rowNumber, colomnNumber, gcnew System::String(branch->slaves[x]->SN.c_str()));
+				rowNumber++;
+			}
+
+		
+		colomnNumber = 1;
+		
 
 		writeToExcel(branch->right_child, book);
-	}
-
-}
-
-
-void Dump_BST::writeToExcelSlave(shared_ptr<BST_NODE>& branch, WorkBook^ book)
-{
-	if (branch != 0 && book)
-	{
-		writeToExcelSlave(branch->left_child, book);
-
-
-		rowNumber++;
-		book->setText(rowNumber, colomnNumber, gcnew System::String(branch->SN.c_str()));
-
-		writeToExcelSlave(branch->right_child, book);
 	}
 
 }
@@ -119,44 +114,28 @@ void Dump_BST::writeToFile(shared_ptr<BST_NODE>& branch, ofstream& myfile)
 	{
 		
 		writeToFile(branch->left_child, myfile);
-
-		
-		
+	
 		if (myfile.is_open())
 		{
 			myfile << "+---" << branch->device; 
-			if (branch->slaves != 0) {
+			if (!branch->slaves.empty()) {
 				myfile << "\n|";
 				myfile << "\t\\---" << branch->SN << "\n|";
-				myfile << "\t\t\\--- slaves\n|";
-				writeToFileSD(branch->slaves, myfile);
+				myfile << "\t\t\--- slaves\n|";
+				for (int x = 0; x < branch->slaves.size(); x++)
+					myfile << "\t\t\\---" << branch->slaves[x]->SN << "\n|";
 			}
 			else
 				myfile << "\n|\t+---" << branch->SN << "\n|";
-			if (branch->duplicates != 0) {
+			if (!branch->duplicates.empty()) {
 				myfile << "\t--- duplicates\n|";
-				writeToFileSD(branch->duplicates, myfile);
+				for (int x = 0; x < branch->duplicates.size(); x++)
+					myfile << "\t\t\\---" << branch->duplicates[x]->SN << "\n|";
 			}
 			
 		}
 		else cout << "Unable to open file";
 		writeToFile(branch->right_child, myfile);
-	}
-}
-
-void Dump_BST::writeToFileSD(shared_ptr<BST_NODE>& branch, ofstream& myfile)
-{
-	if (branch != 0)
-	{
-		writeToFileSD(branch->left_child, myfile);
-
-		if (myfile.is_open())
-		{
-			myfile << "\t\t\\---" << branch->SN << "\n|";
-
-		}
-		else cout << "Unable to open file";
-		writeToFileSD(branch->right_child, myfile);
 	}
 }
 
@@ -178,9 +157,11 @@ shared_ptr<BST_NODE>& Dump_BST::insert(const string & dev, const string & x, sha
 			if (serials != "") {		
 				if (serials.find_first_of(",") == std::string::npos)
 				{
-					int error = insertSlave(dev, serials, branch->slaves);
-					if (error == 1)
-						insertDup(dev, serials, branch->duplicates);
+					//int error = insertSlave(dev, serials, branch->slaves);
+					if(serials==sn)
+						branch->duplicates.push_back(make_shared<BST_NODE>(dev, serials, ""));
+					else
+						branch->slaves.push_back(make_shared<BST_NODE>(dev, serials, ""));
 				}
 				else {
 					do
@@ -190,10 +171,18 @@ shared_ptr<BST_NODE>& Dump_BST::insert(const string & dev, const string & x, sha
 						serials = serials.substr(slave.length());
 						if (serials[0] == ',')
 							serials = serials.substr(1);
-						int error = insertSlave(dev, slave, branch->slaves);
-						if (error == 1)
-							insertDup(dev, slave, branch->duplicates);
+
+
+						for (int x = 0; x < branch->slaves.size();x++)
+							if(slave==branch->slaves[x]->SN)
+								branch->duplicates.push_back(make_shared<BST_NODE>(dev, slave, ""));
+							else
+								branch->slaves.push_back(make_shared<BST_NODE>(dev, slave, ""));
+
+	
 					} while (serials != "");
+					quicksort(branch->slaves, 0, branch->slaves.size());
+					quicksort(branch->duplicates, 0, branch->duplicates.size());
 				}
 			}
 			return branch;
@@ -256,74 +245,25 @@ shared_ptr<BST_NODE>& Dump_BST::insert(shared_ptr<BST_NODE>& node, shared_ptr<BS
 
 
 
-int Dump_BST::insertSlave(const string & dev, const string & x, shared_ptr<BST_NODE>& branch)
-{
-
-	string device = dev, sn = x;
-	if (sn != "") {
-		if (branch == 0)
-		{
-			branch = make_shared<BST_NODE>(device, sn, "");
-			return 0;
-		}
-		else {
-			if (branch->SN > sn && branch->SN != sn)
-				insertSlave(dev, x, branch->left_child);
-			else if (branch->SN < sn && branch->SN != sn)
-				insertSlave(dev, x, branch->right_child);
-			else
-			{
-				return 1;
-			}
-		}
-	}
-}
-
-
-void Dump_BST::insertDup(const string & dev, const string & x, shared_ptr<BST_NODE>& branch)
-{
-
-	string device = dev, sn = x;
-	if (sn != "") {
-		if (branch == 0)
-		{
-			branch = make_shared<BST_NODE>(device, sn, "");
-		}
-		else {
-			if (branch->SN > sn && branch->SN != sn)
-				insertDup(dev, x, branch->left_child);
-			else if (branch->SN < sn && branch->SN != sn)
-				insertDup(dev, x, branch->right_child);
-		}
-	}
-}
-
-
 shared_ptr<BST_NODE>& Dump_BST::search(const string & x, shared_ptr<BST_NODE>& branch)
 {
-	/*string lastname, firstname;
-	lastname = x.substr(0, x.find(" "));
-	firstname = firstname = x.substr(lastname.length() + 1, x.find(" ", lastname.length() + 1) - (lastname.length() + 1));
+
 	if (branch == 0)
 	{
 		cout << "Leaf Reached!\n";
 		return branch;
 	}
 	else {
-		if (branch->last_name > lastname)
+		if (branch->device > x)
 			return search(x, branch->left_child);
-		else if (branch->last_name < lastname)
+		else if (branch->device < x)
 			return search(x, branch->right_child);
-		else if (branch->first_name == firstname)
+		else if (branch->device == x)
 		{
-			if (x == branch->s)
-			{
-				cout << "Really found it\n";
-			}
-			cout << "FOUND IT!\n";
 			return branch;
 		}
-	}*/
+	}
+
 	return root;
 }
 
@@ -405,4 +345,39 @@ void Dump_BST::copy(shared_ptr<BST_NODE>& root, const shared_ptr<BST_NODE>& copy
 		copy(root->left_child, copyN->left_child);
 		copy(root->right_child, copyN->right_child);
 	}*/
+}
+
+
+
+
+int Dump_BST::partition(vector<shared_ptr<BST_NODE>> &B, int p, int r)
+{
+	string x = B[r]->get_SN();
+	int i = p - 1;
+
+	for (int j = p; j <= r - 1; j++)
+	{
+		if (B[j]->get_SN() <= x)
+		{
+			i++;
+			shared_ptr<BST_NODE> temp = B[j];
+			B[j] = B[i];
+			B[i] = temp;
+		}
+
+	}
+	shared_ptr<BST_NODE> temp = B[r];
+	B[r] = B[i + 1];
+	B[i + 1] = temp;
+	return i + 1;
+}
+
+void Dump_BST::quicksort(vector<shared_ptr<BST_NODE>> &B, int p, int r)
+{
+	if (p<r)
+	{
+		int q = partition(B, p, r);
+		quicksort(B, p, q - 1);
+		quicksort(B, q + 1, r);
+	}
 }
