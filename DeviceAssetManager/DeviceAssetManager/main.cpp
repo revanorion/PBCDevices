@@ -3,10 +3,12 @@
 #include <crtdbg.h>
 #include "HashTable.h"
 #include "ExcelBST.h"
-#include "TroposCSVBST.h"
+
 
 void read_xls_data(Excel_BST& e, const string & s);
 void read_csv_tropos_data(Serial_BST& e, const string & s);
+void read_csv_wireless_controller_data(Serial_BST& e, const string & s);
+void read_csv_APS_wireless_data(Serial_BST& e, const string & s);
 void read_csv_wireless_controller_data(Serial_BST& e, const string & s);
 
 string inline getObject(WorkBook^ book, int rowIndex, int colIndex);
@@ -16,10 +18,14 @@ int main()
 	HashTable DataDump;
 	Excel_BST excelData;
 	Serial_BST troposData;
+	Serial_BST WirelessControllerData;
+	Serial_BST APSWirelessData;
+
 	read_csv_tropos_data(troposData, "Data\\Tropos Export Data.csv");
 	read_csv_tropos_data(troposData, "Data\\Tropos Export Data-2.csv");
 	read_csv_tropos_data(troposData, "Data\\Tropos Export Data-3.csv");
-
+	read_csv_wireless_controller_data(WirelessControllerData, "Data\\Wireless_Controllers_20160226_110151_219.csv");
+	read_csv_APS_wireless_data(APSWirelessData, "Data\\aps_wireless_with_serial_number_20160226_104838_679.csv");
 
 	DataDump.read_tool_text("Dump.txt");
 	read_xls_data(excelData, "FY 2016 20160114.xlsx");
@@ -38,11 +44,15 @@ int main()
 		cout << nodeListTropos.back()->get_Asset() << " " << nodeListTropos.back()->get_SN() << endl;
 		nodeListTropos.pop_back();
 	}
-	troposData.Print_Tropos_Comparison_List_to_Excel("TroposCompared.xls");
+	troposData.Print_Comparison_List_to_Excel("TroposCompared.xls");
 
-
-
-
+	vector<shared_ptr<BST_NODE>> nodeController;
+	WirelessControllerData.compare(excelData.get_root(), nodeController);
+	WirelessControllerData.Print_Comparison_List_to_Excel("WirelessControllerCompared.xls");
+	
+	vector<shared_ptr<BST_NODE>> nodeAPS;
+	APSWirelessData.compare(excelData.get_root(), nodeAPS);
+	APSWirelessData.Print_Comparison_List_to_Excel("APSWirelessControllerCompared.xls");
 
 	vector<shared_ptr<BST_NODE>> nodeList;
 	DataDump.compare(excelData.get_root(), nodeList);
@@ -67,6 +77,34 @@ int main()
 	return 0;
 }
 
+void read_csv_APS_wireless_data(Serial_BST& e, const string & s)
+{
+	WorkBook^ book = gcnew WorkBook();
+	book->read(gcnew System::String(s.c_str()));
+	int numsheets = 1;// only first sheet book->NumSheets;
+	for (int sheetIndex = 0; sheetIndex < numsheets; sheetIndex++)
+	{
+		//select sheet
+		book->Sheet = sheetIndex;
+		string sheetName = msclr::interop::marshal_as<std::string>(book->getSheetName(sheetIndex));
+		//get the last row of this sheet.
+		int lastRow = book->LastRow;
+
+		for (int rowIndex = 1; rowIndex <= lastRow && getObject(book,rowIndex,0)!="Disassociated AP(s)"; rowIndex++)
+		{
+			string serial = getObject(book, rowIndex, 3);
+			if (serial != ""&& serial != "Serial Number")
+			{
+				string device = getObject(book, rowIndex, 0);
+				shared_ptr<Serial_NODE> node = make_shared<Serial_NODE>();
+				node->get_device() = device;
+				node->get_SN() = serial;
+				e.insert(node);
+			}
+		}
+	}
+
+}
 
 
 void read_csv_wireless_controller_data(Serial_BST& e, const string & s)
@@ -84,8 +122,8 @@ void read_csv_wireless_controller_data(Serial_BST& e, const string & s)
 
 		for (int rowIndex = 1; rowIndex <= lastRow; rowIndex++)
 		{
-			string serial = getObject(book, rowIndex, 0);
-			if (serial != "")
+			string serial = getObject(book, rowIndex, 4);
+			if (serial != "" && serial !="Serial Number")
 			{
 				string device = getObject(book, rowIndex, 0);
 				shared_ptr<Serial_NODE> node = make_shared<Serial_NODE>();

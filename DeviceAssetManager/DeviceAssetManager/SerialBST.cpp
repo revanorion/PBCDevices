@@ -5,7 +5,7 @@ unsigned int Serial_BST::colomnNumber;
 
 
 
-void Serial_BST::Print_Tropos_Comparison_List_to_Excel(const string & filename)
+void Serial_BST::Print_Comparison_List_to_Excel(const string & filename)
 {
 	WorkBook^ book = gcnew WorkBook();
 	string file = filename;

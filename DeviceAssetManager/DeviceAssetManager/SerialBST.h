@@ -45,7 +45,7 @@ public:
 	void insert(shared_ptr<Serial_NODE>& x) { insert(x, root); };
 	shared_ptr<Serial_NODE>& insert(const string & s, const string & d, shared_ptr<BST_NODE>& x) { return insert(s,d, x, root); };
 	shared_ptr<Serial_NODE>& search(const string & x) { return search(x, root); };
-	void Print_Tropos_Comparison_List_to_Excel(const string & filename);
+	void Print_Comparison_List_to_Excel(const string & filename);
 	void remove(const string & x) { remove(x, root); };
 	void Update(const string & s);//{ cout << "   Inside Client_Info_BST Update\n"; };
 	void print() { print(root); cout << endl; };
