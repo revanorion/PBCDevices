@@ -50,6 +50,7 @@ public:
 	};
 	friend class Dump_BST;
 	friend class Excel_BST;
+	friend class TroposCSV_BST;
 
 private:
 	shared_ptr<BST_NODE> right_child;

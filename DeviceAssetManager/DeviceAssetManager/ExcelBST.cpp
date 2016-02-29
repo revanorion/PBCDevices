@@ -70,6 +70,9 @@ void Excel_BST::writeToExcel(const string & filename)
 	book->write(gcnew System::String(file.c_str()));
 }
 
+
+
+
 void Excel_BST::writeToExcel(shared_ptr<BST_NODE>& branch, WorkBook ^ book)
 {
 	if (branch != 0 && book)

@@ -15,6 +15,7 @@ public:
 	static unsigned int rowNumber;
 	static unsigned int colomnNumber;
 private:
+	
 	void print(shared_ptr<BST_NODE>&);
 	void writeToExcel(shared_ptr<BST_NODE>& branch, WorkBook^ book);
 };

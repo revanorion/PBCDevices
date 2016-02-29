@@ -3,43 +3,130 @@
 #include <crtdbg.h>
 #include "HashTable.h"
 #include "ExcelBST.h"
+#include "TroposCSVBST.h"
 
 void read_xls_data(Excel_BST& e, const string & s);
+void read_csv_tropos_data(Serial_BST& e, const string & s);
+void read_csv_wireless_controller_data(Serial_BST& e, const string & s);
 
 string inline getObject(WorkBook^ book, int rowIndex, int colIndex);
 
 int main()
 {
 	HashTable DataDump;
-	Excel_BST e;
-	
+	Excel_BST excelData;
+	Serial_BST troposData;
+	read_csv_tropos_data(troposData, "Data\\Tropos Export Data.csv");
+	read_csv_tropos_data(troposData, "Data\\Tropos Export Data-2.csv");
+	read_csv_tropos_data(troposData, "Data\\Tropos Export Data-3.csv");
 
 
-	
 	DataDump.read_tool_text("Dump.txt");
-	read_xls_data(e,"FY 2016 20160114.xlsx");
+	read_xls_data(excelData, "FY 2016 20160114.xlsx");
 	DataDump.Print_Serial_list_to_File("serialList.txt");
 	DataDump.Print_Hash_Table_to_File("MyList.txt");
-	e.print();
-	e.writeToExcel("ExcelList.xls");
+	excelData.print();
+	excelData.writeToExcel("ExcelList.xls");
+
+
+
+
+	vector<shared_ptr<BST_NODE>> nodeListTropos;
+	troposData.compare(excelData.get_root(), nodeListTropos);
+	while (!nodeListTropos.empty())
+	{
+		cout << nodeListTropos.back()->get_Asset() << " " << nodeListTropos.back()->get_SN() << endl;
+		nodeListTropos.pop_back();
+	}
+	troposData.Print_Tropos_Comparison_List_to_Excel("TroposCompared.xls");
+
+
+
 
 
 	vector<shared_ptr<BST_NODE>> nodeList;
-	DataDump.compare(e.get_root(),nodeList);
+	DataDump.compare(excelData.get_root(), nodeList);
 	while (!nodeList.empty())
 	{
-		cout << nodeList.back()->get_Asset()<<" " << nodeList.back()->get_SN() << endl;
+		cout << nodeList.back()->get_Asset() << " " << nodeList.back()->get_SN() << endl;
 		nodeList.pop_back();
 	}
+
+
+
+
+
+
+
+
 	DataDump.Print_Comparison_List_to_Excel("comparisionlist.xls");
 	DataDump.Print_Hash_Table_to_Excel("newfile");
 	DataDump.Print_Serial_list_to_File("AllSerials.xls");
 
-	
+
 	return 0;
 }
 
 
+
+void read_csv_wireless_controller_data(Serial_BST& e, const string & s)
+{
+	WorkBook^ book = gcnew WorkBook();
+	book->read(gcnew System::String(s.c_str()));
+	int numsheets = 1;// only first sheet book->NumSheets;
+	for (int sheetIndex = 0; sheetIndex < numsheets; sheetIndex++)
+	{
+		//select sheet
+		book->Sheet = sheetIndex;
+		string sheetName = msclr::interop::marshal_as<std::string>(book->getSheetName(sheetIndex));
+		//get the last row of this sheet.
+		int lastRow = book->LastRow;
+
+		for (int rowIndex = 1; rowIndex <= lastRow; rowIndex++)
+		{
+			string serial = getObject(book, rowIndex, 0);
+			if (serial != "")
+			{
+				string device = getObject(book, rowIndex, 0);
+				shared_ptr<Serial_NODE> node = make_shared<Serial_NODE>();
+				node->get_device() = device;
+				node->get_SN() = serial;
+				e.insert(node);
+			}
+		}
+	}
+
+}
+
+void read_csv_tropos_data(Serial_BST& e, const string & s)
+{
+	WorkBook^ book = gcnew WorkBook();
+	book->read(gcnew System::String(s.c_str()));
+	int numsheets = 1;// only first sheet book->NumSheets;
+	for (int sheetIndex = 0; sheetIndex < numsheets; sheetIndex++)
+	{
+		//select sheet
+		book->Sheet = sheetIndex;
+		string sheetName = msclr::interop::marshal_as<std::string>(book->getSheetName(sheetIndex));
+		//get the last row of this sheet.
+		int lastRow = book->LastRow;
+
+		for (int rowIndex = 1; rowIndex <= lastRow; rowIndex++)
+		{
+			string serial = getObject(book, rowIndex, 0);
+			if (serial != "")
+			{
+				string device = getObject(book, rowIndex, 0);
+				shared_ptr<Serial_NODE> node = make_shared<Serial_NODE>();
+				node->get_device() = device;
+				node->get_SN() = serial;
+				e.insert(node);
+			}
+		}
+	}
+
+}
+//
 
 void read_xls_data(Excel_BST& e, const string & s)
 {
@@ -57,7 +144,7 @@ void read_xls_data(Excel_BST& e, const string & s)
 		string sheetName = msclr::interop::marshal_as<std::string>(book->getSheetName(sheetIndex));
 		//get the last row of this sheet.
 		int lastRow = book->LastRow;
-		
+
 		for (int rowIndex = book->find(0, 0, "Asset #")->Row1 + 1; rowIndex <= lastRow; rowIndex++)
 		{
 			string divison = getObject(book, rowIndex, 2);
@@ -66,7 +153,7 @@ void read_xls_data(Excel_BST& e, const string & s)
 				string asset = getObject(book, rowIndex, 0);
 				string device = getObject(book, rowIndex, 4);
 				string serial = getObject(book, rowIndex, 12);
-					
+
 
 				shared_ptr<BST_NODE> node = make_shared<BST_NODE>(device, serial, asset);
 				node->get_data().Asset_Type = getObject(book, rowIndex, 5);
@@ -98,7 +185,7 @@ string inline getObject(WorkBook^ book, int rowIndex, int colIndex) {
 	{
 
 	case WorkBook::TypeNumber:
-		n =floor( book->getNumber(rowIndex, colIndex));
+		n = floor(book->getNumber(rowIndex, colIndex));
 		//cout << n << endl;
 		return to_string(long long(n));
 

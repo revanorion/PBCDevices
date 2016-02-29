@@ -6,7 +6,7 @@
 class Serial_NODE
 {
 public:
-	Serial_NODE() :right_child(0), left_child(0), parent(0) { cout << "Constructor"; };
+	Serial_NODE() :right_child(0), left_child(0), parent(0) {  };
 	Serial_NODE(const string & sn,const string & dev,shared_ptr<BST_NODE>& p)
 		: SN(sn), right_child(0), left_child(0), parent(p),device(dev) {};
 
@@ -45,7 +45,7 @@ public:
 	void insert(shared_ptr<Serial_NODE>& x) { insert(x, root); };
 	shared_ptr<Serial_NODE>& insert(const string & s, const string & d, shared_ptr<BST_NODE>& x) { return insert(s,d, x, root); };
 	shared_ptr<Serial_NODE>& search(const string & x) { return search(x, root); };
-	
+	void Print_Tropos_Comparison_List_to_Excel(const string & filename);
 	void remove(const string & x) { remove(x, root); };
 	void Update(const string & s);//{ cout << "   Inside Client_Info_BST Update\n"; };
 	void print() { print(root); cout << endl; };
@@ -60,6 +60,7 @@ public:
 		}
 	}
 
+	void compare(shared_ptr<BST_NODE>&branch, vector<shared_ptr<BST_NODE>>&);
 	friend class HashTable;
 	static unsigned int rowNumber;
 	static unsigned int colomnNumber;
@@ -71,8 +72,8 @@ private:
 
 	shared_ptr<Serial_NODE>& search(const string &, shared_ptr<Serial_NODE>&);
 	void writeToFile(shared_ptr<Serial_NODE>&, ofstream&);
-
-
+	void compare(shared_ptr<BST_NODE>&, shared_ptr<Serial_NODE>&, vector<shared_ptr<BST_NODE>>&);
+	void compare_branch(shared_ptr<BST_NODE>&, shared_ptr<Serial_NODE>&, vector<shared_ptr<BST_NODE>>&);
 	void remove(const string &, shared_ptr<Serial_NODE>&);
 	void print(shared_ptr<Serial_NODE>&);
 	void printNode(shared_ptr<Serial_NODE>&);
@@ -80,6 +81,6 @@ private:
 	shared_ptr<Serial_NODE> inorder_succ(const shared_ptr<Serial_NODE>& loc_ptr);
 	void copy(shared_ptr<Serial_NODE>& root, const shared_ptr<Serial_NODE>& copyN);
 	void writeToExcel(shared_ptr<Serial_NODE>& branch, WorkBook^ book);
-		
+	vector<shared_ptr<BST_NODE>> comparisionList;
 };
 #endif
