@@ -18,9 +18,11 @@ void Serial_BST::Print_Comparison_List_to_Excel(const string & filename)
 		book->setText(0, 2, "Serial #");
 		book->setText(0, 3, "Device name");
 		book->setText(0, 4, "Description");
-		book->setText(0, 5, "Location");
-		book->setText(0, 6, "Asset Type");
-		book->setText(0, 7, "Notes");
+		book->setText(0, 5, "Physical Location");
+		book->setText(0, 8, "Asset Type");
+		book->setText(0, 6, "Location");
+		book->setText(0, 7, "Room");
+		book->setText(0, 9, "Notes");
 
 
 		while (!nodeList.empty())
@@ -36,6 +38,10 @@ void Serial_BST::Print_Comparison_List_to_Excel(const string & filename)
 			book->setText(row, col, gcnew System::String(nodeList.back()->get_Data().Physical_Location.c_str()));
 			col++;
 			book->setText(row, col, gcnew System::String(nodeList.back()->get_Data().Asset_Type.c_str()));
+			col++;
+			book->setText(row, col, gcnew System::String(nodeList.back()->get_Data().Location.c_str()));
+			col++;
+			book->setText(row, col, gcnew System::String(nodeList.back()->get_Data().Room_per_fats.c_str()));
 			col++;
 			book->setText(row, col, gcnew System::String(nodeList.back()->get_data().Notes.c_str()));
 			col = 1;

@@ -18,7 +18,9 @@ struct DATA {
 	string Model;
 	string Asset_Type;
 	string Physical_Location;
+	string Room_per_fats;
 	string FATS_Owner;
+	string Location;
 	string Notes;
 };
 

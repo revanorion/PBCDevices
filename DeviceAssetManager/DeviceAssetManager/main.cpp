@@ -162,7 +162,6 @@ void read_csv_tropos_data(Serial_BST& e, const string & s)
 			}
 		}
 	}
-
 }
 //
 
@@ -201,6 +200,8 @@ void read_xls_data(Excel_BST& e, const string & s)
 				node->get_data().Model = getObject(book, rowIndex, 4);
 				node->get_data().Notes = getObject(book, rowIndex, 14);
 				node->get_data().Physical_Location = getObject(book, rowIndex, 7);
+				node->get_Data().Room_per_fats = getObject(book, rowIndex, 9);
+				node->get_Data().Location = getObject(book, rowIndex, 6);
 				e.insert(node);
 			}
 		}
